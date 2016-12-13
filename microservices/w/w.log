@@ -1,0 +1,303 @@
+2016-10-28 20:45:25,362 :: INFO :: *** Start processing id 12 ***
+2016-10-28 20:45:25,363 :: INFO :: Price win: headset.jpg
+2016-10-28 20:45:25,363 :: INFO :: Command: convert prices/headset.jpg -background Khaki label:'id:12' -gravity center -append /tmp/12_headset.jpg
+2016-10-28 20:45:25,433 :: INFO :: Image 12_headset.jpg generated
+2016-10-28 20:45:30,441 :: INFO :: *** End processing id 12 ***
+2016-10-28 20:45:30,446 :: INFO :: *** Start processing id 16 ***
+2016-10-28 20:45:30,447 :: INFO :: Price win: toy2.jpg
+2016-10-28 20:45:30,447 :: INFO :: Command: convert prices/toy2.jpg -background Khaki label:'id:16' -gravity center -append /tmp/16_toy2.jpg
+2016-10-28 20:45:30,555 :: INFO :: Image 16_toy2.jpg generated
+2016-10-28 20:45:35,563 :: INFO :: *** End processing id 16 ***
+2016-10-28 20:45:35,566 :: INFO :: *** Start processing id 13 ***
+2016-10-28 20:45:35,566 :: INFO :: Price win: chair.jpg
+2016-10-28 20:45:35,566 :: INFO :: Command: convert prices/chair.jpg -background Khaki label:'id:13' -gravity center -append /tmp/13_chair.jpg
+2016-10-28 20:45:35,690 :: INFO :: Image 13_chair.jpg generated
+2016-10-28 20:45:40,699 :: INFO :: *** End processing id 13 ***
+2016-10-28 20:45:40,702 :: INFO :: *** Start processing id 11 ***
+2016-10-28 20:45:40,703 :: INFO :: Price win: fishing.jpg
+2016-10-28 20:45:40,704 :: INFO :: Command: convert prices/fishing.jpg -background Khaki label:'id:11' -gravity center -append /tmp/11_fishing.jpg
+2016-10-28 20:45:40,852 :: INFO :: Image 11_fishing.jpg generated
+2016-10-28 20:45:45,857 :: INFO :: *** End processing id 11 ***
+2016-10-28 20:45:45,859 :: INFO :: *** Start processing id 23 ***
+2016-10-28 20:45:45,860 :: INFO :: Price win: toy2.jpg
+2016-10-28 20:45:45,860 :: INFO :: Command: convert prices/toy2.jpg -background Khaki label:'id:23' -gravity center -append /tmp/23_toy2.jpg
+2016-10-28 20:45:45,954 :: INFO :: Image 23_toy2.jpg generated
+2016-10-28 20:45:50,964 :: INFO :: *** End processing id 23 ***
+2016-10-28 20:45:50,968 :: INFO :: *** Start processing id 25 ***
+2016-10-28 20:45:50,969 :: INFO :: Price win: pins.jpg
+2016-10-28 20:45:50,969 :: INFO :: Command: convert prices/pins.jpg -background Khaki label:'id:25' -gravity center -append /tmp/25_pins.jpg
+2016-10-28 20:45:51,079 :: INFO :: Image 25_pins.jpg generated
+2016-10-28 20:45:56,089 :: INFO :: *** End processing id 25 ***
+2016-10-28 20:45:56,095 :: INFO :: *** Start processing id 14 ***
+2016-10-28 20:45:56,098 :: INFO :: Price win: computer.jpg
+2016-10-28 20:45:56,100 :: INFO :: Command: convert prices/computer.jpg -background Khaki label:'id:14' -gravity center -append /tmp/14_computer.jpg
+2016-10-28 20:45:56,182 :: INFO :: Image 14_computer.jpg generated
+2016-10-28 20:46:01,186 :: INFO :: *** End processing id 14 ***
+2016-10-28 20:46:01,189 :: INFO :: *** Start processing id 26 ***
+2016-10-28 20:46:01,190 :: INFO :: Price win: headset.jpg
+2016-10-28 20:46:01,191 :: INFO :: Command: convert prices/headset.jpg -background Khaki label:'id:26' -gravity center -append /tmp/26_headset.jpg
+2016-10-28 20:46:01,284 :: INFO :: Image 26_headset.jpg generated
+2016-10-28 20:46:06,291 :: INFO :: *** End processing id 26 ***
+2016-10-28 20:46:06,294 :: INFO :: *** Start processing id 22 ***
+2016-10-28 20:46:06,295 :: INFO :: Price win: paris.jpg
+2016-10-28 20:46:06,295 :: INFO :: Command: convert prices/paris.jpg -background Khaki label:'id:22' -gravity center -append /tmp/22_paris.jpg
+2016-10-28 20:46:06,447 :: INFO :: Image 22_paris.jpg generated
+2016-10-28 20:46:11,460 :: INFO :: *** End processing id 22 ***
+2016-10-28 20:46:11,465 :: INFO :: *** Start processing id 29 ***
+2016-10-28 20:46:11,466 :: INFO :: Price win: chopstick.jpg
+2016-10-28 20:46:11,466 :: INFO :: Command: convert prices/chopstick.jpg -background Khaki label:'id:29' -gravity center -append /tmp/29_chopstick.jpg
+2016-10-28 20:46:11,613 :: INFO :: Image 29_chopstick.jpg generated
+2016-10-28 20:46:16,621 :: INFO :: *** End processing id 29 ***
+2016-10-28 20:46:16,623 :: INFO :: *** Start processing id 27 ***
+2016-10-28 20:46:16,624 :: INFO :: Price win: toy2.jpg
+2016-10-28 20:46:16,624 :: INFO :: Command: convert prices/toy2.jpg -background Khaki label:'id:27' -gravity center -append /tmp/27_toy2.jpg
+2016-10-28 20:46:16,726 :: INFO :: Image 27_toy2.jpg generated
+2016-10-28 20:46:21,731 :: INFO :: *** End processing id 27 ***
+2016-10-28 20:46:21,735 :: INFO :: *** Start processing id 15 ***
+2016-10-28 20:46:21,736 :: INFO :: Price win: car.jpg
+2016-10-28 20:46:21,736 :: INFO :: Command: convert prices/car.jpg -background Khaki label:'id:15' -gravity center -append /tmp/15_car.jpg
+2016-10-28 20:46:21,825 :: INFO :: Image 15_car.jpg generated
+2016-10-28 20:46:26,832 :: INFO :: *** End processing id 15 ***
+2016-10-28 20:46:26,835 :: INFO :: *** Start processing id 36 ***
+2016-10-28 20:46:26,836 :: INFO :: Price win: scooter.jpg
+2016-10-28 20:46:26,836 :: INFO :: Command: convert prices/scooter.jpg -background Khaki label:'id:36' -gravity center -append /tmp/36_scooter.jpg
+2016-10-28 20:46:26,941 :: INFO :: Image 36_scooter.jpg generated
+2016-10-28 20:46:31,951 :: INFO :: *** End processing id 36 ***
+2016-10-28 20:46:31,954 :: INFO :: *** Start processing id 21 ***
+2016-10-28 20:46:31,955 :: INFO :: Price win: computer.jpg
+2016-10-28 20:46:31,956 :: INFO :: Command: convert prices/computer.jpg -background Khaki label:'id:21' -gravity center -append /tmp/21_computer.jpg
+2016-10-28 20:46:32,047 :: INFO :: Image 21_computer.jpg generated
+2016-10-28 20:46:37,054 :: INFO :: *** End processing id 21 ***
+2016-10-28 20:46:37,058 :: INFO :: *** Start processing id 30 ***
+2016-10-28 20:46:37,059 :: INFO :: Price win: scooter.jpg
+2016-10-28 20:46:37,060 :: INFO :: Command: convert prices/scooter.jpg -background Khaki label:'id:30' -gravity center -append /tmp/30_scooter.jpg
+2016-10-28 20:46:37,180 :: INFO :: Image 30_scooter.jpg generated
+2016-10-28 20:46:42,189 :: INFO :: *** End processing id 30 ***
+2016-10-28 20:46:42,193 :: INFO :: *** Start processing id 9 ***
+2016-10-28 20:46:42,194 :: INFO :: Price win: usbkey.jpg
+2016-10-28 20:46:42,194 :: INFO :: Command: convert prices/usbkey.jpg -background Khaki label:'id:9' -gravity center -append /tmp/9_usbkey.jpg
+2016-10-28 20:46:42,248 :: INFO :: Image 9_usbkey.jpg generated
+2016-10-28 20:46:47,257 :: INFO :: *** End processing id 9 ***
+2016-10-28 20:46:47,261 :: INFO :: *** Start processing id 19 ***
+2016-10-28 20:46:47,262 :: INFO :: Price win: scuba.jpg
+2016-10-28 20:46:47,262 :: INFO :: Command: convert prices/scuba.jpg -background Khaki label:'id:19' -gravity center -append /tmp/19_scuba.jpg
+2016-10-28 20:46:47,389 :: INFO :: Image 19_scuba.jpg generated
+2016-10-28 20:46:52,398 :: INFO :: *** End processing id 19 ***
+2016-10-28 20:46:52,402 :: INFO :: *** Start processing id 34 ***
+2016-10-28 20:46:52,404 :: INFO :: Price win: chair.jpg
+2016-10-28 20:46:52,404 :: INFO :: Command: convert prices/chair.jpg -background Khaki label:'id:34' -gravity center -append /tmp/34_chair.jpg
+2016-10-28 20:46:52,527 :: INFO :: Image 34_chair.jpg generated
+2016-10-28 20:46:57,534 :: INFO :: *** End processing id 34 ***
+2016-10-28 20:46:57,537 :: INFO :: *** Start processing id 49 ***
+2016-10-28 20:46:57,538 :: INFO :: Price win: paris.jpg
+2016-10-28 20:46:57,538 :: INFO :: Command: convert prices/paris.jpg -background Khaki label:'id:49' -gravity center -append /tmp/49_paris.jpg
+2016-10-28 20:46:57,660 :: INFO :: Image 49_paris.jpg generated
+2016-10-28 20:47:02,672 :: INFO :: *** End processing id 49 ***
+2016-10-28 20:47:02,676 :: INFO :: *** Start processing id 17 ***
+2016-10-28 20:47:02,677 :: INFO :: Price win: meal.jpg
+2016-10-28 20:47:02,678 :: INFO :: Command: convert prices/meal.jpg -background Khaki label:'id:17' -gravity center -append /tmp/17_meal.jpg
+2016-10-28 20:47:02,782 :: INFO :: Image 17_meal.jpg generated
+2016-10-28 20:47:07,791 :: INFO :: *** End processing id 17 ***
+2016-10-28 20:47:07,794 :: INFO :: *** Start processing id 1 ***
+2016-10-28 20:47:07,795 :: INFO :: Price win: toy2.jpg
+2016-10-28 20:47:07,796 :: INFO :: Command: convert prices/toy2.jpg -background Khaki label:'id:1' -gravity center -append /tmp/1_toy2.jpg
+2016-10-28 20:47:07,890 :: INFO :: Image 1_toy2.jpg generated
+2016-10-28 20:47:12,900 :: INFO :: *** End processing id 1 ***
+2016-10-28 20:47:12,903 :: INFO :: *** Start processing id 45 ***
+2016-10-28 20:47:12,904 :: INFO :: Price win: toy2.jpg
+2016-10-28 20:47:12,904 :: INFO :: Command: convert prices/toy2.jpg -background Khaki label:'id:45' -gravity center -append /tmp/45_toy2.jpg
+2016-10-28 20:47:13,013 :: INFO :: Image 45_toy2.jpg generated
+2016-10-28 20:47:18,019 :: INFO :: *** End processing id 45 ***
+2016-10-28 20:47:18,023 :: INFO :: *** Start processing id 40 ***
+2016-10-28 20:47:18,024 :: INFO :: Price win: inde.jpg
+2016-10-28 20:47:18,025 :: INFO :: Command: convert prices/inde.jpg -background Khaki label:'id:40' -gravity center -append /tmp/40_inde.jpg
+2016-10-28 20:47:18,116 :: INFO :: Image 40_inde.jpg generated
+2016-10-28 20:47:23,123 :: INFO :: *** End processing id 40 ***
+2016-10-28 20:47:23,128 :: INFO :: *** Start processing id 41 ***
+2016-10-28 20:47:23,129 :: INFO :: Price win: usbkey.jpg
+2016-10-28 20:47:23,130 :: INFO :: Command: convert prices/usbkey.jpg -background Khaki label:'id:41' -gravity center -append /tmp/41_usbkey.jpg
+2016-10-28 20:47:23,198 :: INFO :: Image 41_usbkey.jpg generated
+2016-10-28 20:47:28,202 :: INFO :: *** End processing id 41 ***
+2016-10-28 20:47:28,205 :: INFO :: *** Start processing id 28 ***
+2016-10-28 20:47:28,205 :: INFO :: Price win: toy.jpg
+2016-10-28 20:47:28,206 :: INFO :: Command: convert prices/toy.jpg -background Khaki label:'id:28' -gravity center -append /tmp/28_toy.jpg
+2016-10-28 20:47:28,283 :: INFO :: Image 28_toy.jpg generated
+2016-10-28 20:47:33,291 :: INFO :: *** End processing id 28 ***
+2016-10-28 20:47:33,294 :: INFO :: *** Start processing id 4 ***
+2016-10-28 20:47:33,295 :: INFO :: Price win: scuba.jpg
+2016-10-28 20:47:33,296 :: INFO :: Command: convert prices/scuba.jpg -background Khaki label:'id:4' -gravity center -append /tmp/4_scuba.jpg
+2016-10-28 20:47:33,437 :: INFO :: Image 4_scuba.jpg generated
+2016-10-28 20:47:38,448 :: INFO :: *** End processing id 4 ***
+2016-10-28 20:47:38,454 :: INFO :: *** Start processing id 3 ***
+2016-10-28 20:47:38,455 :: INFO :: Price win: inde.jpg
+2016-10-28 20:47:38,456 :: INFO :: Command: convert prices/inde.jpg -background Khaki label:'id:3' -gravity center -append /tmp/3_inde.jpg
+2016-10-28 20:47:38,537 :: INFO :: Image 3_inde.jpg generated
+2016-10-28 20:47:43,545 :: INFO :: *** End processing id 3 ***
+2016-10-28 20:47:43,548 :: INFO :: *** Start processing id 31 ***
+2016-10-28 20:47:43,549 :: INFO :: Price win: golf.jpg
+2016-10-28 20:47:43,549 :: INFO :: Command: convert prices/golf.jpg -background Khaki label:'id:31' -gravity center -append /tmp/31_golf.jpg
+2016-10-28 20:47:43,678 :: INFO :: Image 31_golf.jpg generated
+2016-10-28 20:47:48,687 :: INFO :: *** End processing id 31 ***
+2016-10-28 20:47:48,691 :: INFO :: *** Start processing id 48 ***
+2016-10-28 20:47:48,692 :: INFO :: Price win: money.jpg
+2016-10-28 20:47:48,693 :: INFO :: Command: convert prices/money.jpg -background Khaki label:'id:48' -gravity center -append /tmp/48_money.jpg
+2016-10-28 20:47:48,834 :: INFO :: Image 48_money.jpg generated
+2016-10-28 20:47:53,846 :: INFO :: *** End processing id 48 ***
+2016-10-28 20:47:53,849 :: INFO :: *** Start processing id 35 ***
+2016-10-28 20:47:53,849 :: INFO :: Price win: chess.jpg
+2016-10-28 20:47:53,850 :: INFO :: Command: convert prices/chess.jpg -background Khaki label:'id:35' -gravity center -append /tmp/35_chess.jpg
+2016-10-28 20:47:53,960 :: INFO :: Image 35_chess.jpg generated
+2016-10-28 20:47:58,968 :: INFO :: *** End processing id 35 ***
+2016-10-28 20:47:58,972 :: INFO :: *** Start processing id 46 ***
+2016-10-28 20:47:58,973 :: INFO :: Price win: scuba.jpg
+2016-10-28 20:47:58,973 :: INFO :: Command: convert prices/scuba.jpg -background Khaki label:'id:46' -gravity center -append /tmp/46_scuba.jpg
+2016-10-28 20:47:59,108 :: INFO :: Image 46_scuba.jpg generated
+2016-10-28 20:48:04,119 :: INFO :: *** End processing id 46 ***
+2016-10-28 20:48:04,122 :: INFO :: *** Start processing id 8 ***
+2016-10-28 20:48:04,123 :: INFO :: Price win: tool.jpg
+2016-10-28 20:48:04,124 :: INFO :: Command: convert prices/tool.jpg -background Khaki label:'id:8' -gravity center -append /tmp/8_tool.jpg
+2016-10-28 20:48:04,263 :: INFO :: Image 8_tool.jpg generated
+2016-10-28 20:48:09,272 :: INFO :: *** End processing id 8 ***
+2016-10-28 20:48:09,277 :: INFO :: *** Start processing id 5 ***
+2016-10-28 20:48:09,278 :: INFO :: Price win: pins.jpg
+2016-10-28 20:48:09,279 :: INFO :: Command: convert prices/pins.jpg -background Khaki label:'id:5' -gravity center -append /tmp/5_pins.jpg
+2016-10-28 20:48:09,372 :: INFO :: Image 5_pins.jpg generated
+2016-10-28 20:48:14,380 :: INFO :: *** End processing id 5 ***
+2016-10-28 20:48:14,382 :: INFO :: *** Start processing id 20 ***
+2016-10-28 20:48:14,382 :: INFO :: Price win: car.jpg
+2016-10-28 20:48:14,383 :: INFO :: Command: convert prices/car.jpg -background Khaki label:'id:20' -gravity center -append /tmp/20_car.jpg
+2016-10-28 20:48:14,458 :: INFO :: Image 20_car.jpg generated
+2016-10-28 20:48:19,466 :: INFO :: *** End processing id 20 ***
+2016-10-28 20:48:19,470 :: INFO :: *** Start processing id 7 ***
+2016-10-28 20:48:19,471 :: INFO :: Price win: car.jpg
+2016-10-28 20:48:19,472 :: INFO :: Command: convert prices/car.jpg -background Khaki label:'id:7' -gravity center -append /tmp/7_car.jpg
+2016-10-28 20:48:19,566 :: INFO :: Image 7_car.jpg generated
+2016-10-28 20:48:24,573 :: INFO :: *** End processing id 7 ***
+2016-10-28 20:48:24,575 :: INFO :: *** Start processing id 33 ***
+2016-10-28 20:48:24,576 :: INFO :: Price win: jewel.jpg
+2016-10-28 20:48:24,576 :: INFO :: Command: convert prices/jewel.jpg -background Khaki label:'id:33' -gravity center -append /tmp/33_jewel.jpg
+2016-10-28 20:48:24,632 :: INFO :: Image 33_jewel.jpg generated
+2016-10-28 20:48:29,638 :: INFO :: *** End processing id 33 ***
+2016-10-28 20:48:29,642 :: INFO :: *** Start processing id 50 ***
+2016-10-28 20:48:29,643 :: INFO :: Price win: meal.jpg
+2016-10-28 20:48:29,643 :: INFO :: Command: convert prices/meal.jpg -background Khaki label:'id:50' -gravity center -append /tmp/50_meal.jpg
+2016-10-28 20:48:29,753 :: INFO :: Image 50_meal.jpg generated
+2016-10-28 20:48:34,763 :: INFO :: *** End processing id 50 ***
+2016-10-28 20:48:34,767 :: INFO :: *** Start processing id 32 ***
+2016-10-28 20:48:34,768 :: INFO :: Price win: car.jpg
+2016-10-28 20:48:34,769 :: INFO :: Command: convert prices/car.jpg -background Khaki label:'id:32' -gravity center -append /tmp/32_car.jpg
+2016-10-28 20:48:34,871 :: INFO :: Image 32_car.jpg generated
+2016-10-28 20:48:39,877 :: INFO :: *** End processing id 32 ***
+2016-10-28 20:48:39,880 :: INFO :: *** Start processing id 6 ***
+2016-10-28 20:48:39,881 :: INFO :: Price win: computer.jpg
+2016-10-28 20:48:39,881 :: INFO :: Command: convert prices/computer.jpg -background Khaki label:'id:6' -gravity center -append /tmp/6_computer.jpg
+2016-10-28 20:48:39,977 :: INFO :: Image 6_computer.jpg generated
+2016-10-28 20:48:44,984 :: INFO :: *** End processing id 6 ***
+2016-10-28 20:48:44,987 :: INFO :: *** Start processing id 38 ***
+2016-10-28 20:48:44,988 :: INFO :: Price win: inde.jpg
+2016-10-28 20:48:44,988 :: INFO :: Command: convert prices/inde.jpg -background Khaki label:'id:38' -gravity center -append /tmp/38_inde.jpg
+2016-10-28 20:48:45,040 :: INFO :: Image 38_inde.jpg generated
+2016-10-28 20:48:50,048 :: INFO :: *** End processing id 38 ***
+2016-10-28 20:48:50,051 :: INFO :: *** Start processing id 47 ***
+2016-10-28 20:48:50,053 :: INFO :: Price win: chess.jpg
+2016-10-28 20:48:50,053 :: INFO :: Command: convert prices/chess.jpg -background Khaki label:'id:47' -gravity center -append /tmp/47_chess.jpg
+2016-10-28 20:48:50,190 :: INFO :: Image 47_chess.jpg generated
+2016-10-28 20:48:55,194 :: INFO :: *** End processing id 47 ***
+2016-10-28 20:48:55,197 :: INFO :: *** Start processing id 39 ***
+2016-10-28 20:48:55,197 :: INFO :: Price win: chair.jpg
+2016-10-28 20:48:55,198 :: INFO :: Command: convert prices/chair.jpg -background Khaki label:'id:39' -gravity center -append /tmp/39_chair.jpg
+2016-10-28 20:48:55,333 :: INFO :: Image 39_chair.jpg generated
+2016-10-28 20:49:00,341 :: INFO :: *** End processing id 39 ***
+2016-10-28 20:49:00,343 :: INFO :: *** Start processing id 44 ***
+2016-10-28 20:49:00,344 :: INFO :: Price win: car.jpg
+2016-10-28 20:49:00,345 :: INFO :: Command: convert prices/car.jpg -background Khaki label:'id:44' -gravity center -append /tmp/44_car.jpg
+2016-10-28 20:49:00,422 :: INFO :: Image 44_car.jpg generated
+2016-10-28 20:49:05,430 :: INFO :: *** End processing id 44 ***
+2016-10-28 20:49:05,434 :: INFO :: *** Start processing id 42 ***
+2016-10-28 20:49:05,435 :: INFO :: Price win: paris.jpg
+2016-10-28 20:49:05,435 :: INFO :: Command: convert prices/paris.jpg -background Khaki label:'id:42' -gravity center -append /tmp/42_paris.jpg
+2016-10-28 20:49:05,585 :: INFO :: Image 42_paris.jpg generated
+2016-10-28 20:49:10,594 :: INFO :: *** End processing id 42 ***
+2016-10-28 20:49:10,599 :: INFO :: *** Start processing id 37 ***
+2016-10-28 20:49:10,601 :: INFO :: Price win: scuba.jpg
+2016-10-28 20:49:10,601 :: INFO :: Command: convert prices/scuba.jpg -background Khaki label:'id:37' -gravity center -append /tmp/37_scuba.jpg
+2016-10-28 20:49:10,756 :: INFO :: Image 37_scuba.jpg generated
+2016-10-28 20:49:15,766 :: INFO :: *** End processing id 37 ***
+2016-10-28 20:49:15,768 :: INFO :: *** Start processing id 18 ***
+2016-10-28 20:49:15,768 :: INFO :: Price win: jewel.jpg
+2016-10-28 20:49:15,769 :: INFO :: Command: convert prices/jewel.jpg -background Khaki label:'id:18' -gravity center -append /tmp/18_jewel.jpg
+2016-10-28 20:49:15,821 :: INFO :: Image 18_jewel.jpg generated
+2016-10-28 20:49:20,828 :: INFO :: *** End processing id 18 ***
+2016-10-28 20:49:20,830 :: INFO :: *** Start processing id 2 ***
+2016-10-28 20:49:20,831 :: INFO :: Price win: headset.jpg
+2016-10-28 20:49:20,831 :: INFO :: Command: convert prices/headset.jpg -background Khaki label:'id:2' -gravity center -append /tmp/2_headset.jpg
+2016-10-28 20:49:20,932 :: INFO :: Image 2_headset.jpg generated
+2016-10-28 20:49:25,941 :: INFO :: *** End processing id 2 ***
+2016-10-28 20:49:25,944 :: INFO :: *** Start processing id 10 ***
+2016-10-28 20:49:25,945 :: INFO :: Price win: usbkey.jpg
+2016-10-28 20:49:25,945 :: INFO :: Command: convert prices/usbkey.jpg -background Khaki label:'id:10' -gravity center -append /tmp/10_usbkey.jpg
+2016-10-28 20:49:26,001 :: INFO :: Image 10_usbkey.jpg generated
+2016-10-28 20:49:31,008 :: INFO :: *** End processing id 10 ***
+2016-10-28 20:49:31,011 :: INFO :: *** Start processing id 24 ***
+2016-10-28 20:49:31,012 :: INFO :: Price win: scuba.jpg
+2016-10-28 20:49:31,013 :: INFO :: Command: convert prices/scuba.jpg -background Khaki label:'id:24' -gravity center -append /tmp/24_scuba.jpg
+2016-10-28 20:49:31,126 :: INFO :: Image 24_scuba.jpg generated
+2016-10-28 20:49:36,136 :: INFO :: *** End processing id 24 ***
+2016-10-28 20:49:36,140 :: INFO :: *** Start processing id 43 ***
+2016-10-28 20:49:36,141 :: INFO :: Price win: toy.jpg
+2016-10-28 20:49:36,141 :: INFO :: Command: convert prices/toy.jpg -background Khaki label:'id:43' -gravity center -append /tmp/43_toy.jpg
+2016-10-28 20:49:36,201 :: INFO :: Image 43_toy.jpg generated
+2016-10-28 20:49:41,206 :: INFO :: *** End processing id 43 ***
+2016-11-02 09:53:55,136 :: INFO :: *** Start processing id 51 ***
+2016-11-02 09:53:55,136 :: INFO :: Price win: chopstick.jpg
+2016-11-02 09:53:55,137 :: INFO :: Command: convert prices/chopstick.jpg -background Khaki label:'id:51' -gravity center -append /tmp/51_chopstick.jpg
+2016-11-02 09:53:55,228 :: INFO :: Image 51_chopstick.jpg generated
+2016-11-02 09:54:00,234 :: INFO :: *** End processing id 51 ***
+2016-11-02 16:34:20,478 :: INFO :: *** Start processing id 52 ***
+2016-11-02 16:34:20,479 :: INFO :: Price win: inde.jpg
+2016-11-02 16:34:20,480 :: INFO :: Command: convert prices/inde.jpg -background Khaki label:'id:52' -gravity center -append /tmp/52_inde.jpg
+2016-11-02 16:34:20,521 :: INFO :: Image 52_inde.jpg generated
+2016-11-02 16:34:25,529 :: INFO :: *** End processing id 52 ***
+2016-11-02 16:35:22,560 :: INFO :: *** Start processing id 23 ***
+2016-11-02 16:35:22,560 :: INFO :: Price win: car.jpg
+2016-11-02 16:35:22,561 :: INFO :: Command: convert prices/car.jpg -background Khaki label:'id:23' -gravity center -append /tmp/23_car.jpg
+2016-11-02 16:35:22,612 :: INFO :: Image 23_car.jpg generated
+2016-11-02 16:35:27,619 :: INFO :: *** End processing id 23 ***
+2016-11-02 16:35:35,434 :: INFO :: *** Start processing id 23 ***
+2016-11-02 16:35:35,435 :: INFO :: Price win: meal.jpg
+2016-11-02 16:35:35,436 :: INFO :: Command: convert prices/meal.jpg -background Khaki label:'id:23' -gravity center -append /tmp/23_meal.jpg
+2016-11-02 16:35:35,523 :: INFO :: Image 23_meal.jpg generated
+2016-11-02 16:35:40,528 :: INFO :: *** End processing id 23 ***
+2016-11-03 09:51:16,533 :: INFO :: *** Start processing id 23 ***
+2016-11-03 09:51:16,534 :: INFO :: Price win: chair.jpg
+2016-11-03 09:51:16,535 :: INFO :: Command: convert prices/chair.jpg -background Khaki label:'id:23' -gravity center -append /tmp/23_chair.jpg
+2016-11-03 09:51:16,726 :: INFO :: Image 23_chair.jpg generated
+2016-11-03 09:51:21,734 :: INFO :: *** End processing id 23 ***
+2016-11-03 15:55:29,491 :: INFO :: *** Start processing id 23 ***
+2016-11-03 15:55:29,506 :: INFO :: Price win: scooter.jpg
+2016-11-03 15:55:29,510 :: INFO :: Command: convert prices/scooter.jpg -background Khaki label:'id:23' -gravity center -append /tmp/23_scooter.jpg
+2016-11-03 15:55:29,673 :: INFO :: Image 23_scooter.jpg generated
+2016-11-03 15:55:34,694 :: INFO :: *** End processing id 23 ***
+2016-11-04 07:56:22,613 :: INFO :: *** Start processing id 53 ***
+2016-11-04 07:56:22,614 :: INFO :: Price win: fishing.jpg
+2016-11-04 07:56:22,615 :: INFO :: Command: convert prices/fishing.jpg -background Khaki label:'id:53' -gravity center -append /tmp/53_fishing.jpg
+2016-11-04 07:56:22,749 :: INFO :: Image 53_fishing.jpg generated
+2016-11-04 07:56:27,755 :: INFO :: *** End processing id 53 ***
+2016-11-09 10:53:56,486 :: INFO :: Starting Microservice w
+2016-11-09 10:55:31,664 :: INFO :: *** Start processing id 1 ***
+2016-11-09 10:55:31,665 :: INFO :: Price win: chess.jpg
+2016-11-09 10:55:31,665 :: INFO :: Command: convert prices/chess.jpg -background Khaki label:'id:1' -gravity center -append /tmp/1_chess.jpg
+2016-11-09 10:55:31,812 :: INFO :: Image 1_chess.jpg generated
+2016-11-09 10:55:36,820 :: INFO :: *** End processing id 1 ***
+2016-11-09 11:02:03,483 :: INFO :: *** Start processing id 1 ***
+2016-11-09 11:02:03,483 :: INFO :: Price win: tool.jpg
+2016-11-09 11:02:03,484 :: INFO :: Command: convert prices/tool.jpg -background Khaki label:'id:1' -gravity center -append /tmp/1_tool.jpg
+2016-11-09 11:02:03,598 :: INFO :: Image 1_tool.jpg generated
+2016-11-09 11:02:08,604 :: INFO :: *** End processing id 1 ***
+2016-11-18 12:08:18,670 :: INFO :: Starting Microservice w
+2016-11-18 12:08:18,879 :: INFO :: Starting Microservice w
+2016-11-18 12:09:33,194 :: INFO :: *** Start processing id 1 ***
+2016-11-18 12:09:33,195 :: INFO :: Price win: tool.jpg
+2016-11-18 12:09:33,196 :: INFO :: Command: convert prices/tool.jpg -background Khaki label:'id:1' -gravity center -append /tmp/1_tool.jpg
+2016-11-18 12:09:33,330 :: INFO :: Image 1_tool.jpg generated
+2016-11-18 12:09:38,339 :: INFO :: *** End processing id 1 ***
