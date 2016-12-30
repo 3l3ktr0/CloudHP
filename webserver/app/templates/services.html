@@ -1,0 +1,12 @@
+<div class='box'>
+    <h2>Service Status (S)</h2>
+    {% if errors.s %}
+      <p>Service S not currently available.</p>
+      <p>Exception caught :</p>
+      <p>{{ errors.s }}</p>
+    {% elif services.s.playdate is not none %}
+      <p>You already played the game on : {{ services.s.playdate }}</p>
+    {% else %}
+      <p>You haven't played the game yet !</p>
+    {% endif %}
+</div>
