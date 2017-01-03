@@ -43,7 +43,7 @@ def handle_service_i(id, services, errors):
 def handle_service_s(id, services, errors):
     try:
         r = requests.get('http://s:5002/{}'.format(id))
-        if (r_status_code == 200):
+        if (r.status_code == 200):
             services['s'] = r.json()
         else:
             errors['s'] = "placeholder"
