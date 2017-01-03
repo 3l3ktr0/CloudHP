@@ -22,12 +22,15 @@ def hello_world():
 def api_identify(id):
     """ Get user info from DB with given ID """
     # config.logger.info("[Service-I] Start - id = %s", id)
-    cust_info = get_user_info(id)
-    return jsonify(cust_info) if cust_info is not None else abort(400)
+    try:
+        cust_info = get_user_info(id)
+        return jsonify(cust_info) if cust_info is not None else abort(400)
+    except Exception as e:
+        abort(503) #DB unavailable
 
 def get_user_info(id):
     """ Return customer info as a dict """
-    conn = pymysql.connect(host='localhost', user='root', passwd='root',
+    conn = pymysql.connect(host='db_i', user='root', passwd='root',
                            db='prestashop', cursorclass=pymysql.cursors.DictCursor)
     try:
         with conn.cursor() as cursor:
@@ -39,4 +42,4 @@ def get_user_info(id):
         conn.close()
 
 if __name__ == '__main__':
-        app.run(port=5001)
+        app.run(host='0.0.0.0', port=5001)

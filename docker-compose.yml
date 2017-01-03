@@ -1,0 +1,37 @@
+version: '2'
+services:
+  i:
+    build: microservices/i/.
+    volumes:
+      - ./microservices/i:/i
+  s:
+    build: microservices/s/.
+    volumes:
+      - ./microservices/s:/s
+  w:
+    build : microservices/w/.
+    ports:
+      - "8090:8090"
+  web:
+    build: webserver/.
+    volumes:
+      - ./webserver/:/web
+    ports:
+      - "5000:5000"
+  db_i:
+    image: mysql:5.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: prestashop
+    # ports:
+    #   - 3306:3306
+    volumes:
+      - ./db-i:/docker-entrypoint-initdb.d
+  db_s:
+    image: mysql:5.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    # ports:
+    #   - 3306:3306
+    volumes:
+      - ./db-s:/docker-entrypoint-initdb.d

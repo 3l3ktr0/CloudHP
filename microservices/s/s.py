@@ -22,12 +22,15 @@ def hello_world():
 def api_status(id):
     """ Checks if customer is present in DB """
     # config.logger.info("[Service-I] Start - id = %s", id)
-    cust_info = get_user_info(id)
-    return jsonify(cust_info)
+    try:
+        cust_info = get_user_info(id)
+        return jsonify(cust_info)
+    except Exception as e:
+        abort(503)
 
 def get_user_info(id):
     """ Return customer info as a dict """
-    conn = pymysql.connect(host='localhost', user='root', passwd='root',
+    conn = pymysql.connect(host='db_s', user='root', passwd='root',
                            db='playstatus', cursorclass=pymysql.cursors.DictCursor)
     try:
         with conn.cursor() as cursor:
@@ -41,4 +44,4 @@ def get_user_info(id):
         conn.close()
 
 if __name__ == '__main__':
-        app.run(port=5002)
+        app.run(host='0.0.0.0', port=5002)
