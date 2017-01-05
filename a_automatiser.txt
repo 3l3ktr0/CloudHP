@@ -1,0 +1,3 @@
+-Install de Docker (get.docker.com)  et Docker compose
+-Définir règle port 80 TCP (HTTP) pour le groupe de sécurité default (permet d'accéder à la page web une fois connecté au VPN)
+
