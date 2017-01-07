@@ -82,9 +82,10 @@ echo "---STEP 5: DONE---"
 #Done in parallel
 #TODO:parameters
 echo "---STEP 6: Creating $NODES instances with Docker---"
-echo "---STEP 6 Estimated duration: 5 to 10 minutes"
+echo "---STEP 6 Estimated duration: 5 to 10 minutes---"
 for ((i=1; i <= $NODES; i++)); do
   uuids[$i]=$(uuidgen)
+  sleep 5
   docker-machine create -d openstack --openstack-flavor-name="m1.small" \
   --openstack-image-name="ubuntu1404" --openstack-keypair-name="TP_Cloud_maxime"\
   --openstack-net-name="my-private-network" --openstack-sec-groups="default" \
@@ -124,12 +125,13 @@ echo "---STEP 8: DONE---"
 #Build the Docker images on every host (including Bastion)
 #(add other services when ready)
 echo "---STEP 9: Build Docker images on every host---"
+echo "---STEP 9 Estimated duration: about 5 minutes---"
 cmd="sudo docker build ./webserver -t cloudhp_webserver && \
 sudo docker build ./db_i -t db_i && \
 sudo docker build ./db_s -t db_s && \
 sudo docker build ./microservices/i -t cloudhp_i && \
 sudo docker build ./microservices/s -t cloudhp_s"
-eval "$cmd"
+eval "$cmd" &
 for ((i=1; i <= $NODES; i++)); do
   docker-machine ssh swarm-${uuids[$i]} "cd ./cloudHP && $cmd" >/dev/null &
 done
@@ -155,3 +157,4 @@ echo "---STEP 11: DONE---"
 
 echo "---Application deployed succesfully !---"
 echo "---Launch it by going to http://$BASTION_IP on your browser---"
+echo "---Consider waiting 1-2 minutes to let DBs init processes finish---"
