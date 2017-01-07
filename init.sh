@@ -122,14 +122,14 @@ echo "---STEP 8: DONE---"
 #Build the Docker images on every host (including Bastion)
 #(add other services when ready)
 echo "---STEP 9: Build Docker images on every host---"
-cmd="cd ./cloudHP && docker build ./webserver -t cloudhp_webserver && \
-docker build ./db_i -t db_i \
-docker build ./db_s -t db_s \
-docker build ./microservices/i -t cloudhp_i \
-docker build ./microservices/s -t cloudhp_s"
+cmd="sudo docker build ./webserver -t cloudhp_webserver && \
+sudo docker build ./db_i -t db_i \
+sudo docker build ./db_s -t db_s \
+sudo docker build ./microservices/i -t cloudhp_i \
+sudo docker build ./microservices/s -t cloudhp_s"
 eval "$cmd"
 for ((i=1; i <= $NODES; i++)); do
-  docker-machine ssh swarm-${uuids[$i]} "$cmd" &
+  docker-machine ssh swarm-${uuids[$i]} "cd ./cloudHP && $cmd" &
 done
 wait
 echo "---STEP 9: DONE---"
