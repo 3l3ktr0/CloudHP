@@ -1,3 +1,32 @@
 -Install de Docker (get.docker.com)  et Docker compose
 -Définir règle port 80 TCP (HTTP) pour le groupe de sécurité default (permet d'accéder à la page web une fois connecté au VPN)
+-Installer docker-machine sur bastion
+-cmd pour créer une instance Ubuntu avec Docker préparé : docker-machine create -d openstack --openstack-flavor-name="m1.small" \ 
+--openstack-image-name="ubuntu1404" \ 
+--openstack-keypair-name="TP_Cloud_maxime" \
+--openstack-net-name="my-private-network" \
+--openstack-sec-groups="default" \
+--openstack-ssh-user="ubuntu" \
+--openstack-private-key-file ./cloud.key \
+dockermachine2
+
+-init swarm :
+docker swarm init --advertise-addr <IP_BASTION>
+
+-Recup token swarm :
+docker swarm join-token -q worker
+
+Pour chaque worker :
+-Récup l'env :
+eval "$(docker-machine env <NOM WORKER>)"
+-l'inscrire au swarm :
+docker swarm join \
+    --token <le token> \
+    <ipbastion>:2377
+
+Création des réseaux swarm :
+-un pour web,i,s,w,b,p
+-un pour (i,db_i) et un pour (s,db_s) : but isoler les dbs des autres services
+Commande :
+docker network create -d overlay <nom reseau> : pour chaque reseau à créer
 
