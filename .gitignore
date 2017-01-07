@@ -92,5 +92,3 @@ ENV/
 
 .DS_Store
 .idea
-cloud.key
-cloud.key.pub

@@ -86,9 +86,9 @@ echo "---STEP 6 Estimated duration: 5 to 10 minutes"
 for ((i=1; i <= $NODES; i++)); do
   uuids[$i]=$(uuidgen)
   docker-machine create -d openstack --openstack-flavor-name="m1.small" \
-  --openstack-image-name="ubuntu1404" --openstack-keypair-name="TP_Cloud_maxime" \
+  --openstack-image-name="ubuntu1404" --openstack-keypair-name="TP_Cloud_maxime"\
   --openstack-net-name="my-private-network" --openstack-sec-groups="default" \
-  --openstack-ssh-user="ubuntu" --openstack-private-key-file ./cloud.key \
+  --openstack-ssh-user="ubuntu" --openstack-private-key-file="./cloud.key" \
   swarm-${uuids[$i]} &
 done
 wait
@@ -99,7 +99,7 @@ echo "---STEP 6: Initializing a Docker Swarm---"
 BASTION_IP="$(ifconfig | grep -A 1 'ens3' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"
 sudo docker swarm init --advertise-addr $BASTION_IP
 #Retrieve swarm token
-TOKEN="$(docker swarm join-token -q worker)"
+TOKEN="$(sudo docker swarm join-token -q worker)"
 echo "---STEP 6: DONE---"
 
 #Add worker nodes to swarm
@@ -114,7 +114,7 @@ eval "$(docker-machine env -u)"
 #Cloning repository on every instance
 echo "---STEP 8: Cloning repository on the $NODES instances---"
 for ((i=1; i <= $NODES; i++)); do
-  docker-machine ssh swarm-${uuids[$i]} $GIT_CLONE &
+  docker-machine ssh swarm-${uuids[$i]} "$GIT_CLONE && cd ./cloudHP && git checkout heat_test" &
 done
 wait
 echo "---STEP 8: DONE---"
@@ -123,9 +123,9 @@ echo "---STEP 8: DONE---"
 #(add other services when ready)
 echo "---STEP 9: Build Docker images on every host---"
 cmd="sudo docker build ./webserver -t cloudhp_webserver && \
-sudo docker build ./db_i -t db_i \
-sudo docker build ./db_s -t db_s \
-sudo docker build ./microservices/i -t cloudhp_i \
+sudo docker build ./db_i -t db_i && \
+sudo docker build ./db_s -t db_s && \
+sudo docker build ./microservices/i -t cloudhp_i && \
 sudo docker build ./microservices/s -t cloudhp_s"
 eval "$cmd"
 for ((i=1; i <= $NODES; i++)); do
