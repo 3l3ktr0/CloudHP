@@ -69,7 +69,7 @@ echo "---STEP 3: DONE---"
 #Install Docker on Bastion VM
 echo "---STEP 4: Installing Docker---"
 echo "---STEP 4 Estimated duration: < 5 minutes---"
-curl -sSL https://get.docker.com/ | sh >/dev/null
+curl -sSL https://get.docker.com/ | sh
 echo "---STEP 4: DONE---"
 #Install Docker-machine on Bastion VM
 echo "---STEP 5: Installing Docker-machine---"
@@ -83,13 +83,13 @@ echo "---STEP 5: DONE---"
 #TODO:parameters
 echo "---STEP 6: Creating $NODES instances with Docker---"
 echo "---STEP 6 Estimated duration: 5 to 10 minutes"
-for ((i=0; i <= $NODES; i++)); do
+for ((i=1; i <= $NODES; i++)); do
   uuids[$i]=$(uuidgen)
   docker-machine create -d openstack --openstack-flavor-name="m1.small" \
   --openstack-image-name="ubuntu1404" --openstack-keypair-name="TP_Cloud_maxime" \
   --openstack-net-name="my-private-network" --openstack-sec-groups="default" \
   --openstack-ssh-user="ubuntu" --openstack-private-key-file ./cloud.key \
-  swarm_${uuids[$i]} &
+  swarm-${uuids[$i]} &
 done
 wait
 echo "---STEP 6: DONE---"
@@ -104,8 +104,8 @@ echo "---STEP 6: DONE---"
 
 #Add worker nodes to swarm
 echo "---STEP 7: Adding $NODES instances to Swarm---"
-for ((i=0; i <= $NODES; i++)); do
-  eval "$(docker-machine env swarm_${uuids[$i]})"
+for ((i=1; i <= $NODES; i++)); do
+  eval "$(docker-machine env swarm-${uuids[$i]})"
   sudo docker swarm join --token $TOKEN $BASTION_IP:2377
 done
 echo "---STEP 7: DONE---"
@@ -113,8 +113,8 @@ eval "$(docker-machine env -u)"
 
 #Cloning repository on every instance
 echo "---STEP 8: Cloning repository on the $NODES instances---"
-for ((i=0; i <= $NODES; i++)); do
-  docker-machine ssh swarm_${uuids[$i]} $GIT_CLONE &
+for ((i=1; i <= $NODES; i++)); do
+  docker-machine ssh swarm-${uuids[$i]} $GIT_CLONE &
 done
 wait
 echo "---STEP 8: DONE---"
@@ -128,8 +128,8 @@ docker build ./db_s -t db_s \
 docker build ./microservices/i -t cloudhp_i \
 docker build ./microservices/s -t cloudhp_s"
 eval "$cmd"
-for ((i=0; i <= $NODES; i++)); do
-  docker-machine ssh swarm_${uuids[$i]} "$cmd" &
+for ((i=1; i <= $NODES; i++)); do
+  docker-machine ssh swarm-${uuids[$i]} "$cmd" &
 done
 wait
 echo "---STEP 9: DONE---"
@@ -144,7 +144,7 @@ echo "---STEP 10: DONE---"
 #And finally, launch the services !
 echo "---STEP 11: Starting services---"
 sudo docker service create --name web -p 80:5000 --network swarm_services \
---constraints 'node.role == manager' cloudhp_webserver
+--constraint 'node.role == manager' cloudhp_webserver
 sudo docker service create --name db_i --network swarm_db_i db_i
 sudo docker service create --name db_s --network swarm_db_s db_s
 sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i
