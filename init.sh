@@ -47,12 +47,11 @@ if [[ -z $SOURCE ]]; then
   help
   exit 1
 fi
-. "$SOURCE"
 
-#git clone the project on the Bastion VM
-# echo "---STEP 1: Cloning git repository on Bastion---"
-# $GIT_CLONE
-# echo "---STEP 1: DONE---"
+echo "---STEP 1: OpenStack credentials---"
+. "$SOURCE"
+cd "$(dirname "$(realpath "$0")")";
+echo "---STEP 1: DONE---"
 
 #Install python3-pip and python-openstackclient
 echo "---STEP 2: Installing python requirements---"
