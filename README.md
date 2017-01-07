@@ -1,5 +1,9 @@
 # CloudHP
 
+##Architecture
+
+<img src="cloudhp_archi.png" width="200">
+
 ##How to deploy
 
 -SSH into Bastion VM

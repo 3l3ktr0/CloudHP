@@ -116,7 +116,7 @@ echo "---STEP 7: DONE---"
 #Cloning repository on every instance
 echo "---STEP 8: Cloning repository on the $NODES instances---"
 for ((i=1; i <= $NODES; i++)); do
-  docker-machine ssh swarm-${uuids[$i]} "$GIT_CLONE && cd ./cloudHP && git checkout heat_test" >/dev/null &
+  docker-machine ssh swarm-${uuids[$i]} "$GIT_CLONE" >/dev/null &
 done
 wait
 echo "---STEP 8: DONE---"
