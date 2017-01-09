@@ -2,7 +2,7 @@
 
 ##Architecture
 
-<img src="cloudhp_archi.png" width="200">
+<img src="cloudhp_archi.png">
 
 ##How to deploy
 
