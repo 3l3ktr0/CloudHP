@@ -1,0 +1,22 @@
+#Load-balancer Docker Flow Proxy (basé sur HAProxy)
+Super lien qui explique tout : https://technologyconversations.com/2016/08/01/integrating-proxy-with-docker-swarm-tour-around-docker-1-12-series/
+
+Commandes à automatiser :
+sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy
+(attention à ne PAS autoriser le port 8080 sur le groupe de sécu OpenStack)
+curl "localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000"
+
+Cela permettra d'avoir plusieurs instances de webserver (automatiquement load-balancé par Swarm),
+il faudra mettre le container HAProxy sur le node Bastion dans un 1er temps, puis voir si on peut en mettre plusieurs.
+
+#Persistance des DB:
+Solution simple :
+sudo docker service create --name db_s --network swarm_db_s \
+--constraint 'node.hostname == <NODE A DETERMINER>' --mount type=volume,src=mysqldata,dst=/var/lib/mysql db_s
+
+Inconvénient : on perd la feature de réplication de Docker Swarm (pour les DB)
+(car les volumes sur 2 nodes différents sont différents aussi), mais au moins la DB est relativement persistante.
+
+Solution compliquée :
+-Regarder Flocker, gluster ?
+-Regarder si y'a moyen avec Openstack d'avoir un volume persistant partagé (cinder ?) ou NFS
