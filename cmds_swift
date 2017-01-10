@@ -9,3 +9,9 @@ conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tena
 
 conn.put_object('test', 'hello', contents='world')
 conn.get_object('test', 'hello')
+
+Pour tester swift sur le swarm bastion2:
+sur bastion2:
+. projetopenrc... mettre le mdp
+sudo docker build microservices/b
+sudo docker service create -e OS_AUTH_URL=$OS_AUTH_URL,... b --constraint 'node.role == manager' 

@@ -1,5 +1,5 @@
 #!/bin/bash
-NODES=3
+NODES=3g
 GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
 help() {
