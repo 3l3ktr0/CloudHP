@@ -75,12 +75,6 @@ if ! nova secgroup-list | grep -q 'docker-secgroup'; then
 fi
 echo "---STEP 3: DONE---"
 
-#Install Docker on Bastion VM (not necessary anymore)
-# echo "---STEP 4: Installing Docker---"
-# echo "---STEP 4 Estimated duration: < 5 minutes---"
-# curl -sSL https://get.docker.com/ | sh
-# echo "---STEP 4: DONE---"
-
 #Install Docker-machine on Bastion VM
 echo "---STEP 4: Installing Docker-machine---"
 curl -L https://github.com/docker/machine/releases/download/v0.9.0-rc2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine \
@@ -102,7 +96,7 @@ for ((i=1; i <= $NODES; i++)); do
   else
     nodes[$i]=swarm-worker-${uuids[$i]}
   fi
-  sleep 20
+  sleep 60
   docker-machine create -d openstack --openstack-flavor-name="m1.small" \
   --openstack-image-name="ubuntu1404" --openstack-keypair-name="$swarmkey"\
   --openstack-net-name="my-private-network" --openstack-sec-groups="docker-secgroup" \
@@ -123,12 +117,10 @@ echo "---STEP 6: DONE---"
 #Add worker nodes to swarm
 echo "---STEP 7: Adding worker instances to Swarm---"
 for ((i=2; i <= $NODES; i++)); do
-  #eval "$(docker-machine env swarm-${uuids[$i]})"
   cmd="sudo docker swarm join --token $TOKEN $MANAGER_IP:2377"
   docker-machine ssh ${nodes[$i]} "$cmd"
 done
 echo "---STEP 7: DONE---"
-#eval "$(docker-machine env -u)"
 
 #Cloning repository on every instance
 echo "---STEP 8: Cloning repository on the $NODES instances---"
@@ -146,6 +138,7 @@ cmd="sudo docker build ./webserver -t cloudhp_webserver && \
 sudo docker build ./db_i -t db_i && \
 sudo docker build ./db_s -t db_s && \
 sudo docker build ./microservices/i -t cloudhp_i && \
+sudo docker build ./microservices/b -t cloudhp_b && \
 sudo docker build ./microservices/s -t cloudhp_s"
 for ((i=1; i <= $NODES; i++)); do
   docker-machine ssh ${nodes[$i]} "cd ./cloudHP && $cmd" >/dev/null &
@@ -164,12 +157,13 @@ echo "---STEP 10: DONE---"
 
 #And finally, launch the services !
 echo "---STEP 11: Starting services---"
-cmd="sudo docker service create --name web --network swarm_services cloudhp_webserver && \
+cmd="sudo docker service create --name web --network swarm_services,swarm_proxy cloudhp_webserver && \
 sudo docker service create --name db_i --network swarm_db_i db_i && \
 sudo docker service create --name db_s --network swarm_db_s \
 --constraint 'node.hostname == ${nodes[2]}' --mount type=volume,src=mysqldata,dst=/var/lib/mysql db_s && \
 sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i && \
 sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s && \
+sudo docker service create --name b --network swarm_services cloudhp_b && \
 sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
 -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
 curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
@@ -184,5 +178,5 @@ openstack server add floating ip ${nodes[1]} $pubip
 echo "---step 12: DONE---"
 
 echo "---Application deployed succesfully !---"
-echo "---Launch it by going to http://$pubip on your browser---"
-echo "---Consider waiting 1-2 minutes to let DBs init processes finish---"
+echo "---Launch it by going to http://$pubip/index.html?id=<ID> on your browser---"
+echo "---Consider waiting 2-3 minutes to let DBs init processes finish---"
