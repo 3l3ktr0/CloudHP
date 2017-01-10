@@ -4,6 +4,10 @@
 
 <img src="cloudhp_archi.png">
 
+##Architecture prévue
+
+<img src="cloudhp_archi_v2.png">
+
 ##How to deploy
 
 -SSH into Bastion VM
