@@ -1,5 +1,5 @@
 #!/bin/bash
-NODES=3g
+NODES=3
 GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
 help() {
@@ -61,14 +61,16 @@ pip3 install python-openstackclient
 echo "---STEP 2: DONE---"
 
 echo "---STEP 3: Creating Docker security group---"
-nova secgroup-create docker-secgroup "Groupe de sécurité pour Docker Swarm"
-nova secgroup-add-group-rule docker-secgroup default tcp 22 22 #Allow SSH from bastion
-#The following rules are for enabling swarm communications
-nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 7946 7946
-nova secgroup-add-group-rule docker-secgroup docker-secgroup udp 7946 7946
-nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 4789 4789
-nova secgroup-add-group-rule docker-secgroup docker-secgroup udp 4789 4789
-nova secgroup-add-rule docker-secgroup tcp 80 80 0.0.0.0/0 #Allow connection to webserver from outside
+if ! nova secgroup-list | grep -q 'docker-secgroup'; then
+  nova secgroup-create docker-secgroup "Groupe de sécurité pour Docker Swarm"
+  nova secgroup-add-group-rule docker-secgroup default tcp 22 22 #Allow SSH from bastion
+  #The following rules are for enabling swarm communications
+  nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 7946 7946
+  nova secgroup-add-group-rule docker-secgroup docker-secgroup udp 7946 7946
+  nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 4789 4789
+  nova secgroup-add-group-rule docker-secgroup docker-secgroup udp 4789 4789
+  nova secgroup-add-rule docker-secgroup tcp 80 80 0.0.0.0/0 #Allow connection to webserver from outside
+fi
 echo "---STEP 3: DONE---"
 
 #Install Docker on Bastion VM (not necessary anymore)
@@ -89,6 +91,8 @@ echo "---STEP 4: DONE---"
 #TODO:parameters
 echo "---STEP 5: Creating $NODES instances with Docker---"
 echo "---STEP 5 Estimated duration: 5 to 10 minutes---"
+swarmkey=swarm-key-$(uuidgen)
+openstack keypair create $swarmkey > $swarmkey.pem
 for ((i=1; i <= $NODES; i++)); do
   uuids[$i]=$(uuidgen)
   if [[ $i -eq 1 ]]; then
@@ -98,9 +102,9 @@ for ((i=1; i <= $NODES; i++)); do
   fi
   sleep 20
   docker-machine create -d openstack --openstack-flavor-name="m1.small" \
-  --openstack-image-name="ubuntu1404" --openstack-keypair-name="TP_Cloud_maxime"\
+  --openstack-image-name="ubuntu1404" --openstack-keypair-name="$swarmkey"\
   --openstack-net-name="my-private-network" --openstack-sec-groups="docker-secgroup" \
-  --openstack-ssh-user="ubuntu" --openstack-private-key-file="./cloud.key" --openstack-insecure \
+  --openstack-ssh-user="ubuntu" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
   ${nodes[$i]} >/dev/null &
 done
 wait
@@ -172,7 +176,11 @@ curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePat
 docker-machine ssh ${nodes[1]} "$cmd1 && $cmd2"
 echo "---STEP 11: DONE---"
 
+echo "---STEP 12: Allocating and associating floating IP---"
+pubip=$(openstack floating ip create -f json external-network | jq .floating_ip_address | sed 's/"//g')
+openstack server add floating ip ${nodes[1]} $pubip
+echo "---step 12: DONE---"
 
 echo "---Application deployed succesfully !---"
-echo "---Launch it by going to http://$MANAGER_IP on your browser---"
+echo "---Launch it by going to http://$pubip on your browser---"
 echo "---Consider waiting 1-2 minutes to let DBs init processes finish---"
