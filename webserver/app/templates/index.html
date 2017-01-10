@@ -30,7 +30,11 @@
         <h2>Service Button (B)</h2>
         <p>
 		<form action="" method="POST">
-            {{ services.b }}
+            {% if  services.b %}
+                {{ services.b }}
+        
+            {% endif %}
+            
 			<input type="submit" value="Play !"/>
             
 		</form>

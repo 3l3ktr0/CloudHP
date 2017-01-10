@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 import requests
+import logging
 
 app = Flask(__name__)
 
@@ -22,8 +23,8 @@ def index():
     handle_service_s(id, services, errors)
 
     if request.method == 'POST':
-        services['b'] = "hello"
-
+        handle_service_b(id, services, errors)
+   
     return render_template('index.html', services=services, errors=errors)
 
 
@@ -47,6 +48,7 @@ def handle_service_b(id, services, errors):
     bad_request_check = False
     try:
         r = requests.get('http://b:5003/{}'.format(id))
+        logging.warning("Reçu de b %s", r) 
         #check if id is out of range, if so, status_code is 400
         if (r.status_code == 400):
             bad_request_check = True
