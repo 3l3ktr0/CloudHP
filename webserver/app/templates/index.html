@@ -10,6 +10,7 @@
             margin-top: 5px;
         }
     </style>
+
 </head>
 
 <body>
@@ -27,7 +28,13 @@
     <!-- Service B -->
     <div class='box'>
         <h2>Service Button (B)</h2>
-        <p>TODO</p>
+        <p>
+		<form action="" method="POST">
+            {{ services.b }}
+			<input type="submit" value="Play !"/>
+            
+		</form>
+	</p>
     </div>
 
     <!-- Service P -->

@@ -5,7 +5,7 @@ import requests
 
 app = Flask(__name__)
 
-@app.route('/index.html')
+@app.route('/index.html', methods=['GET','POST'])
 def index():
     id = request.args.get('id', default=None, type=int)
     if id is None:
@@ -20,6 +20,9 @@ def index():
         return render_template('noidprovided.html')
 
     handle_service_s(id, services, errors)
+
+    if request.method == 'POST':
+        services['b'] = "hello"
 
     return render_template('index.html', services=services, errors=errors)
 
@@ -37,6 +40,22 @@ def handle_service_i(id, services, errors):
             errors['i'] = "placeholder"
     except requests.exceptions.RequestException as e:
         errors['i'] = str(e)
+    finally:
+        return bad_request_check
+
+def handle_service_b(id, services, errors):
+    bad_request_check = False
+    try:
+        r = requests.get('http://b:5003/{}'.format(id))
+        #check if id is out of range, if so, status_code is 400
+        if (r.status_code == 400):
+            bad_request_check = True
+        elif (r.status_code == 200):
+            services['b'] = r.json()
+        else:
+            errors['b'] = "placeholder"
+    except requests.exceptions.RequestException as e:
+        errors['b'] = str(e)
     finally:
         return bad_request_check
 
