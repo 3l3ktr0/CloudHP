@@ -63,7 +63,8 @@ echo "---STEP 2: DONE---"
 echo "---STEP 3: Creating Docker security group---"
 if ! nova secgroup-list | grep -q 'docker-secgroup'; then
   nova secgroup-create docker-secgroup "Groupe de sécurité pour Docker Swarm"
-  nova secgroup-add-group-rule docker-secgroup default tcp 22 22 #Allow SSH from bastion
+  nova secgroup-add-group-rule docker-secgroup default tcp 1 65535 #Allow all from bastion
+  nova secgroup-add-group-rule docker-secgroup default udp 1 65535
   #The following rules are for enabling swarm communications
   nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 7946 7946
   nova secgroup-add-group-rule docker-secgroup docker-secgroup udp 7946 7946
@@ -113,7 +114,7 @@ echo "---STEP 5: DONE---"
 #Initialize a Swarm
 echo "---STEP 6: Initializing a Docker Swarm---"
 MANAGER_IP="$(docker-machine ip ${nodes[1]})"
-docker-machine ssh ${nodes[1]} "docker swarm init --advertise-addr $MANAGER_IP"
+docker-machine ssh ${nodes[1]} "sudo docker swarm init --advertise-addr $MANAGER_IP"
 #Retrieve swarm token
 TOKEN="$(docker-machine ssh ${nodes[1]} 'sudo docker swarm join-token -q worker')"
 echo "---STEP 6: DONE---"
@@ -145,7 +146,6 @@ sudo docker build ./db_i -t db_i && \
 sudo docker build ./db_s -t db_s && \
 sudo docker build ./microservices/i -t cloudhp_i && \
 sudo docker build ./microservices/s -t cloudhp_s"
-eval "$cmd" &
 for ((i=1; i <= $NODES; i++)); do
   docker-machine ssh ${nodes[$i]} "cd ./cloudHP && $cmd" >/dev/null &
 done
@@ -154,15 +154,16 @@ echo "---STEP 9: DONE---"
 
 # #Create Swarm networking
 echo "---STEP 10: Creating the Swarm networks---"
-cmd1="sudo docker network create -d overlay swarm_services && \
+cmd="sudo docker network create -d overlay swarm_services && \
 sudo docker network create -d overlay swarm_db_i && \
 sudo docker network create -d overlay swarm_db_s && \
 sudo docker network create -d overlay swarm_proxy"
+docker-machine ssh ${nodes[1]} "$cmd"
 echo "---STEP 10: DONE---"
 
 #And finally, launch the services !
 echo "---STEP 11: Starting services---"
-cmd2="sudo docker service create --name web -p 80:5000 --network swarm_services cloudhp_webserver && \
+cmd="sudo docker service create --name web -p 80:5000 --network swarm_services cloudhp_webserver && \
 sudo docker service create --name db_i --network swarm_db_i db_i && \
 sudo docker service create --name db_s --network swarm_db_s \
 --constraint 'node.hostname == ${nodes[2]}' --mount type=volume,src=mysqldata,dst=/var/lib/mysql db_s && \
@@ -173,7 +174,7 @@ sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_
 curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
 
 #Execute commands remotely on manager
-docker-machine ssh ${nodes[1]} "$cmd1 && $cmd2"
+docker-machine ssh ${nodes[1]} "$cmd"
 echo "---STEP 11: DONE---"
 
 echo "---STEP 12: Allocating and associating floating IP---"
