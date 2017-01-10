@@ -1,5 +1,5 @@
 #!/bin/bash
-NODES=4
+NODES=3
 GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
 help() {
@@ -96,13 +96,13 @@ for ((i=1; i <= $NODES; i++)); do
   else
     nodes[$i]=swarm-worker-${uuids[$i]}
   fi
-  sleep 5
+  sleep 10
   docker-machine create -d openstack --openstack-flavor-name="m1.small" \
   --openstack-image-name="ubuntu1404" --openstack-keypair-name="TP_Cloud_maxime"\
   --openstack-net-name="my-private-network" --openstack-sec-groups="docker-secgroup" \
   --openstack-ssh-user="ubuntu" --openstack-private-key-file="./cloud.key" --openstack-insecure \
   ${nodes[$i]} >/dev/null &
-  sleep 5
+  sleep 10
 done
 wait
 echo "---STEP 4: DONE---"
@@ -110,7 +110,7 @@ echo "---STEP 4: DONE---"
 #Initialize a Swarm
 echo "---STEP 5: Initializing a Docker Swarm---"
 MANAGER_IP="$(docker-machine ip ${nodes[1]})"
-sudo docker swarm init --advertise-addr $MANAGER_IP
+docker-machine ssh ${nodes[1]} "docker swarm init --advertise-addr $MANAGER_IP"
 #Retrieve swarm token
 TOKEN="$(docker-machine ssh ${nodes[1]} 'sudo docker swarm join-token -q worker')"
 echo "---STEP 5: DONE---"
