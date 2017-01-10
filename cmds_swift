@@ -1,0 +1,11 @@
+import swiftclient
+import os
+
+auth=os.environ['OS_AUTH_URL']
+user=os.environ['OS_USERNAME']
+pwd=os.environ['OS_PASSWORD']
+tenantname=os.environ['OS_TENANT_NAME']
+conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tenantname, auth_version='2')
+
+conn.put_object('test', 'hello', contents='world')
+conn.get_object('test', 'hello')
