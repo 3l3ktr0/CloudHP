@@ -66,6 +66,7 @@ if ! nova secgroup-list | grep -q 'docker-secgroup'; then
   nova secgroup-add-group-rule docker-secgroup default tcp 1 65535 #Allow all from bastion
   nova secgroup-add-group-rule docker-secgroup default udp 1 65535
   #The following rules are for enabling swarm communications
+  nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 2377 2377
   nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 7946 7946
   nova secgroup-add-group-rule docker-secgroup docker-secgroup udp 7946 7946
   nova secgroup-add-group-rule docker-secgroup docker-secgroup tcp 4789 4789
@@ -163,7 +164,7 @@ echo "---STEP 10: DONE---"
 
 #And finally, launch the services !
 echo "---STEP 11: Starting services---"
-cmd="sudo docker service create --name web -p 80:5000 --network swarm_services cloudhp_webserver && \
+cmd="sudo docker service create --name web --network swarm_services cloudhp_webserver && \
 sudo docker service create --name db_i --network swarm_db_i db_i && \
 sudo docker service create --name db_s --network swarm_db_s \
 --constraint 'node.hostname == ${nodes[2]}' --mount type=volume,src=mysqldata,dst=/var/lib/mysql db_s && \
