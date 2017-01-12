@@ -98,7 +98,7 @@ for ((i=1; i <= $NODES; i++)); do
   fi
   sleep 60
   docker-machine create -d openstack --openstack-flavor-name="m1.small" \
-  --openstack-image-name="ubuntu1404" --openstack-keypair-name="$swarmkey"\
+  --openstack-image-name="ubuntu1604" --openstack-keypair-name="$swarmkey"\
   --openstack-net-name="my-private-network" --openstack-sec-groups="docker-secgroup" \
   --openstack-ssh-user="ubuntu" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
   ${nodes[$i]} >/dev/null &
