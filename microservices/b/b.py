@@ -9,6 +9,8 @@ from flask import jsonify
 from flask import abort
 import logging
 import requests
+#import swiftclient
+import os
 
 app = Flask(__name__)
 app.debug = True
@@ -24,7 +26,20 @@ def api_identify(id):
         if (r.status_code == 400):
             bad_request_check = True
         elif (r.status_code == 200):
+            res_w = r.json()
+
+            logging.warning(res_w)
+
+            # Enregistrement de l'image dans SWIFT 
+            auth=os.environ['OS_AUTH_URL']
+            user=os.environ['OS_USERNAME']
+            pwd=os.environ['OS_PASSWORD']
+            tenantname=os.environ['OS_TENANT_NAME']
             
+            conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tenantname, auth_version='2')
+
+            conn.put_object('prices', id + '.txt', contents=res_w.img)
+
             return jsonify({"message": "Bonsoir"})
         else:
             errors['b'] = "placeholder"
