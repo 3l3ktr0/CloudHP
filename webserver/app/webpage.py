@@ -71,5 +71,23 @@ def handle_service_s(id, services, errors):
     except requests.exceptions.RequestException as e:
         errors['s'] = str(e)
 
+def handle_service_p(id, services, errors):
+    bad_request_check = False
+    try:
+        r = requests.get('http://p:5004/{}'.format(id))
+        logging.warning("Reçu de p %s", r) 
+        #check if id is out of range, if so, status_code is 400
+        if (r.status_code == 400):
+            bad_request_check = True
+        elif (r.status_code == 200):
+            services['p'] = r.json()
+        else:
+            errors['p'] = "placeholder"
+    except requests.exceptions.RequestException as e:
+        errors['p'] = str(e)
+    finally:
+        return bad_request_check
+
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5000)
+
