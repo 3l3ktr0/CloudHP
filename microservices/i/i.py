@@ -7,12 +7,10 @@
 from flask import Flask
 from flask import jsonify
 from flask import abort
-#import config
 import pymysql
 
 app = Flask(__name__)
 app.debug = True
-#config.logger = app.logger
 
 @app.route('/')
 def hello_world():
