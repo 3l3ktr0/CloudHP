@@ -24,7 +24,8 @@ def index():
 
     if request.method == 'POST':
         handle_service_b(id, services, errors)
-   
+    handle_service_p(id, services, errors)
+
     return render_template('index.html', services=services, errors=errors)
 
 
@@ -48,7 +49,7 @@ def handle_service_b(id, services, errors):
     bad_request_check = False
     try:
         r = requests.get('http://b:5003/{}'.format(id))
-        logging.warning("Reçu de b %s", r) 
+        logging.warning("Reçu de b %s", r)
         #check if id is out of range, if so, status_code is 400
         if (r.status_code == 400):
             bad_request_check = True
@@ -75,7 +76,7 @@ def handle_service_p(id, services, errors):
     bad_request_check = False
     try:
         r = requests.get('http://p:5004/{}'.format(id))
-        logging.warning("Reçu de p %s", r) 
+        logging.warning("Reçu de p %s", r)
         #check if id is out of range, if so, status_code is 400
         if (r.status_code == 400):
             bad_request_check = True
@@ -90,4 +91,3 @@ def handle_service_p(id, services, errors):
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5000)
-

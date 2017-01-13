@@ -5,7 +5,7 @@
       <p>Exception caught :</p>
       <p>{{ errors.p }}</p>
     {% elif services.p.imgB64 is not none %}
-      <img src={{ services.p.imgB64 }}/>
+      <img src="{{ services.p.imgB64 }}"/>
     {% else %}
       <p>You haven't played the game yet !</p>
     {% endif %}

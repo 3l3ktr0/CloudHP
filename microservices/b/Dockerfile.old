@@ -1,0 +1,6 @@
+FROM python:3.4-alpine
+ADD . /b
+WORKDIR /b
+RUN apk add --update g++ linux-headers && pip3 install flask requests python-swiftclient python-keystoneclient
+EXPOSE 5003
+CMD ["python", "b.py"]

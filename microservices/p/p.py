@@ -9,13 +9,14 @@ from flask import jsonify
 from flask import abort
 import logging
 import requests
+import swiftclient
 
 app = Flask(__name__)
 app.debug = True
 
 @app.route("/<id>")
 def api_identify(id):
-    logging.warning("*** Starting p ****") 
+    logging.warning("*** Starting p ****")
     try:
         auth=os.environ['OS_AUTH_URL']
         user=os.environ['OS_USERNAME']
@@ -23,13 +24,11 @@ def api_identify(id):
         tenantname=os.environ['OS_TENANT_NAME']
         conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tenantname, auth_version='2')
         try:
-            res =  conn.get_object('prices', id + ".txt");
+            res =  conn.get_object('prices', "{}.txt".format(id))[1];
+            res = res.decode('utf-8')
+            return jsonify({'imgB64' : 'data:image/png;base64,{}'.format(res)})
         except Exception as e2:
-            return None
-
-        return {'imgB64' : '"data:image/png;base64, '+ res[1] + '"'}
-
-        
+            return jsonify({'imgB64': None})
     except Exception as e:
         abort(503) #DB unavailable
 
