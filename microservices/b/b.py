@@ -36,7 +36,7 @@ def api_identify(id):
             tenantname=os.environ['OS_TENANT_NAME']
 
             conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tenantname, auth_version='2')
-            conn.put_object('prices', id + '.txt', contents=res_w['img'])
+            conn.put_object('prices', '{}.txt'.format(id), contents=res_w['img'])
             return jsonify({"message": "Bonsoir"})
         else:
             return jsonify({"message": "W failed"}) #to change ?
