@@ -10,6 +10,7 @@ from flask import abort
 import logging
 import requests
 import swiftclient
+import os
 
 app = Flask(__name__)
 app.debug = True
