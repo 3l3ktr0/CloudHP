@@ -2,12 +2,20 @@
 NODES=3
 GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
+##MODIFY THIS TO CONFORM WITH YOUR OPENSTACK INSTALLATION##
+FLAVOR="m1.small"
+IMAGE="ubuntu1404"
+NETWORK="my-private-network"
+SSH_USER="ubuntu"
+
 help() {
-  echo "Usage: init.sh -f <OPENRC file> [-n <Number of instances>] [-h (Help)]"
+  echo "Usage: init.sh -f <OPENRC file> [-n <Number of instances>] [-h (Help)] [-p (Parallel)]"
+  echo "Parallel mode creates many VM instances at the same time. Faster, but maybe less reliable..."
 }
 
 #Parse args
 SOURCE=
+PARALLEL=0
 while [[ "$#" -ne 0 ]]; do
   case "$1" in
     "-f" )
@@ -32,6 +40,9 @@ while [[ "$#" -ne 0 ]]; do
     ;;
     "-h" )
     help
+    ;;
+    "-p" )
+    PARALLEL=1
     ;;
     *)
     echo "Invalid parameters"
@@ -96,12 +107,20 @@ for ((i=1; i <= $NODES; i++)); do
   else
     nodes[$i]=swarm-worker-${uuids[$i]}
   fi
-  docker-machine create -d openstack --openstack-flavor-name="m1.small" \
-  --openstack-image-name="ubuntu1404" --openstack-keypair-name="$swarmkey"\
-  --openstack-net-name="my-private-network" --openstack-sec-groups="docker-secgroup" \
-  --openstack-ssh-user="ubuntu" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
-  ${nodes[$i]} >/dev/null &
-  sleep 60
+  if [[ $PARALLEL -eq 1 ]]; then
+    docker-machine create -d openstack --openstack-flavor-name="$FLAVOR" \
+    --openstack-image-name="$IMAGE" --openstack-keypair-name="$swarmkey"\
+    --openstack-net-name="$NETWORK" --openstack-sec-groups="docker-secgroup" \
+    --openstack-ssh-user="$SSH_USER" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
+    ${nodes[$i]} >/dev/null &
+    sleep 60
+  else
+    docker-machine create -d openstack --openstack-flavor-name="$FLAVOR" \
+    --openstack-image-name="$IMAGE" --openstack-keypair-name="$swarmkey"\
+    --openstack-net-name="$NETWORK" --openstack-sec-groups="docker-secgroup" \
+    --openstack-ssh-user="$SSH_USER" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
+    ${nodes[$i]} >/dev/null
+  fi
 done
 wait
 echo "---STEP 5: DONE---"
@@ -179,17 +198,31 @@ echo "---STEP 11: DONE---"
 
 #And finally, launch the services !
 echo "---STEP 12: Starting services---"
-cmd="sudo docker service create --name web --network swarm_services,swarm_proxy cloudhp_webserver && \
-sudo docker service create --name db_i --network swarm_db_i \
---mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_i,dst=/var/lib/mysql db_i && \
-sudo docker service create --name db_s --network swarm_db_s \
+# cmd="sudo docker service create --name web --network swarm_services,swarm_proxy cloudhp_webserver && \
+# sudo docker service create --name db_i --network swarm_db_i \
+# --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_i,dst=/var/lib/mysql db_i && \
+# sudo docker service create --name db_s --network swarm_db_s \
+# --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s && \
+# sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i && \
+# sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s && \
+# sudo docker service create --name b --network swarm_services cloudhp_b && \
+# sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
+# -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
+# curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
+
+# 'workaround' needed to get persistant Cinder storage to work... a better solution would be nice
+# but we don't have much time anymore.
+# We don't really need persistant storage for DB_I... so we don't use it.
+cmd="sudo docker service create --name web --mode global --network swarm_services,swarm_proxy cloudhp_webserver && \
+sudo docker service create --name db_i --network swarm_db_i db_i && \
+sudo docker service create --name db_s --network swarm_db_s --constraint 'node.role == manager' \
 --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s && \
 sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i && \
 sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s && \
 sudo docker service create --name b --network swarm_services cloudhp_b && \
 sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
 -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
-curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
+sleep 10 && curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
 
 #Execute commands remotely on manager
 docker-machine ssh ${nodes[1]} "$cmd"
