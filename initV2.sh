@@ -179,7 +179,9 @@ cmd="sudo docker build ./webserver -t cloudhp_webserver && \
 sudo docker build ./db_i -t db_i && \
 sudo docker build ./db_s -t db_s && \
 sudo docker build ./microservices/i -t cloudhp_i && \
+sudo docker build ./microservices -t b_p_common && \
 sudo docker build ./microservices/b -t cloudhp_b && \
+sudo docker build ./microservices/p -t cloudhp_p && \
 sudo docker build ./microservices/s -t cloudhp_s"
 for ((i=1; i <= $NODES; i++)); do
   docker-machine ssh ${nodes[$i]} "cd ./cloudHP && $cmd" >/dev/null &
@@ -219,7 +221,12 @@ sudo docker service create --name db_s --network swarm_db_s --constraint 'node.r
 --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s && \
 sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i && \
 sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s && \
-sudo docker service create --name b --network swarm_services cloudhp_b && \
+sudo docker service create --name b --network swarm_services \
+-e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
+-e OS_PASSWORD=$OS_PASSWORD cloudhp_b && \
+sudo docker service create --name p --network swarm_services \
+-e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
+-e OS_PASSWORD=$OS_PASSWORD cloudhp_p && \
 sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
 -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
 sleep 10 && curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
