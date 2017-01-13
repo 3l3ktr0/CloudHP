@@ -22,8 +22,12 @@ def api_identify(id):
         pwd=os.environ['OS_PASSWORD']
         tenantname=os.environ['OS_TENANT_NAME']
         conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tenantname, auth_version='2')
+        try:
+            res =  conn.get_object('prices', id + ".txt");
+        except Exception as e2:
+            return None
 
-        return conn.get_object('prices', id + ".txt")[1]
+        return {'imgB64' : '"data:image/png;base64, '+ res[1] + '"'}
 
         
     except Exception as e:
