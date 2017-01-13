@@ -23,7 +23,7 @@ def api_identify(id):
         tenantname=os.environ['OS_TENANT_NAME']
         conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tenantname, auth_version='2')
 
-        return conn.get_object('prices', id + ".jpg")
+        return conn.get_object('prices', id + ".txt")[1]
 
         
     except Exception as e:
