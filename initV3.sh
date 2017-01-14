@@ -1,5 +1,5 @@
 #!/bin/bash
-NODES=3
+NODES=4
 GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
 ##MODIFY THIS TO CONFORM WITH YOUR OPENSTACK INSTALLATION##
@@ -68,7 +68,7 @@ echo "---STEP 1: DONE---"
 echo "---STEP 2: Installing requirements (python and jq)---"
 sudo apt-get update
 sudo apt-get install -y python3-pip jq
-pip3 install python-novaclient python-heatclient
+pip3 install python-openstackclient python-heatclient
 echo "---STEP 2: DONE---"
 
 echo "---STEP 3: Creating Docker security group---"
