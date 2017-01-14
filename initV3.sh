@@ -4,7 +4,6 @@ GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
 ##MODIFY THIS TO CONFORM WITH YOUR OPENSTACK INSTALLATION##
 FLAVOR="m1.small"
-#IMAGE="ubuntu1404"
 NETWORK="my-private-network"
 SSH_USER="ubuntu"
 
@@ -96,8 +95,7 @@ echo "---STEP 4: DONE---"
 echo "---STEP 5: Creating Docker snapshot image---"
 #Create instance with Docker and Rex-Ray preinstalled
 stack_name=docker-stack-$(uuidgen)
-heat stack-create $stack_name -f heat_test/installdocker.yaml \
--P "openstack_auth=$OS_AUTH_URL;openstack_user=$OS_USERNAME;openstack_pwd=$OS_PASSWORD;openstack_tenantID=$OS_TENANT_ID;openstack_region=$OS_REGION_NAME"
+heat stack-create $stack_name -f heat_test/installdocker.yaml
 
 #Wait until image creation is complete (poll every minute)
 echo "Waiting for stack creation to complete (estimated duration: 10 to 20 minutes)..."
@@ -163,15 +161,7 @@ for ((i=2; i <= $NODES; i++)); do
 done
 echo "---STEP 8: DONE---"
 
-#Cloning repository on every instance
-echo "---STEP 9: Cloning repository on the $NODES instances---"
-for ((i=1; i <= $NODES; i++)); do
-  docker-machine ssh ${nodes[$i]} "$GIT_CLONE" >/dev/null &
-done
-wait
-echo "---STEP 9: DONE---"
-
-echo "---STEP 10: Installing REX-Ray on the $NODES instances---"
+echo "---STEP 9: Installing REX-Ray on the $NODES instances---"
 cat << EOF > /tmp/config.yml
 rexray:
   storageDrivers:
@@ -191,20 +181,20 @@ for ((i=1; i <= $NODES; i++)); do
   docker-machine scp /tmp/config.yml ${nodes[$i]}:/tmp/config.yml
   docker-machine ssh ${nodes[$i]} 'sudo cp /tmp/config.yml /etc/rexray/config.yml && sudo service rexray start'
 done
-echo "---STEP 10: DONE---"
+echo "---STEP 9: DONE---"
 
 
 #Create Swarm networking
-echo "---STEP 11: Creating the Swarm networks---"
+echo "---STEP 10: Creating the Swarm networks---"
 cmd="sudo docker network create -d overlay swarm_services && \
 sudo docker network create -d overlay swarm_db_i && \
 sudo docker network create -d overlay swarm_db_s && \
 sudo docker network create -d overlay swarm_proxy"
 docker-machine ssh ${nodes[1]} "$cmd"
-echo "---STEP 11: DONE---"
+echo "---STEP 10: DONE---"
 
 #And finally, launch the services !
-echo "---STEP 12: Starting services---"
+echo "---STEP 11: Starting services---"
 # cmd="sudo docker service create --name web --network swarm_services,swarm_proxy cloudhp_webserver && \
 # sudo docker service create --name db_i --network swarm_db_i \
 # --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_i,dst=/var/lib/mysql db_i && \
@@ -234,7 +224,7 @@ sudo docker service create --name p --network swarm_services \
 -e OS_PASSWORD=$OS_PASSWORD cloudhp_p && \
 sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
 -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
-sleep 10 && curl localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web\&servicePath=/\&port=5000"
+sleep 20 && curl localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web\&servicePath=/\&port=5000"
 
 #'Workaround' for a Cinder bug which gives a wrong device name (todo)
 #journalctl -u rexray | grep -o -m 1 'open /dev/.*: no such file or directory' | cut -d: -f1 | cut -c6-
@@ -243,12 +233,12 @@ sleep 10 && curl localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web
 
 #Execute commands remotely on manager
 docker-machine ssh ${nodes[1]} "$cmd"
-echo "---STEP 12: DONE---"
+echo "---STEP 11: DONE---"
 
-echo "---STEP 13: Allocating and associating floating IP---"
+echo "---STEP 12: Allocating and associating floating IP---"
 pubip=$(openstack floating ip create -f json external-network | jq .floating_ip_address | sed 's/"//g')
 openstack server add floating ip ${nodes[1]} $pubip
-echo "---step 13: DONE---"
+echo "---step 12: DONE---"
 
 echo "---Application deployed succesfully !---"
 echo "---Launch it by going to http://$pubip/index.html?id=<ID> on your browser---"
