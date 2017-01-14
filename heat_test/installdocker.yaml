@@ -1,0 +1,88 @@
+heat_template_version: 2013-05-23
+
+parameters:
+  key_name:
+    type: string
+    default: TP_Cloud_maxime
+  image:
+    type: string
+    default: ubuntu1404
+  flavor:
+    type: string
+    default: m1.small
+  openstack_auth:
+    type: string
+  openstack_user:
+    type: string
+  openstack_pwd:
+    type: string
+  openstack_tenant:
+    type: string
+  openstack_region:
+    type: string
+    default: region1
+
+resources:
+  wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: {get_resource: wait_handle}
+      # Note, count of 5 vs 6 is due to duplicate signal ID 5 sent below
+      count: 3
+
+  wait_handle:
+    type: OS::Heat::WaitConditionHandle
+
+  docker-test:
+    type: OS::Nova::Server
+    properties:
+      image: {get_param: image}
+      flavor: {get_param: flavor}
+      key_name: {get_param: key_name}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            curl -sSL https://get.docker.com/ | sh
+            wc_notify --data-binary '{"status": "SUCCESS", "reason": "Docker installed"}'
+
+            cd
+            git clone https://github.com/3l3ktr0/CloudHP.git cloudHP
+            cd cloudHP
+            sudo docker build ./webserver -t cloudhp_webserver
+            sudo docker build ./db_i -t db_i
+            sudo docker build ./db_s -t db_s
+            sudo docker build ./microservices/i -t cloudhp_i
+            sudo docker build ./microservices -t b_p_common
+            sudo docker build ./microservices/b -t cloudhp_b
+            sudo docker build ./microservices/p -t cloudhp_p
+            sudo docker build ./microservices/s -t cloudhp_s
+            wc_notify --data-binary '{"status": "SUCCESS", "reason": "Docker images built"}'
+
+            cat << EOF > /tmp/config.yml
+            rexray:
+              storageDrivers:
+                - openstack
+            volume:
+              mount:
+                prempt: true
+            openstack:
+              authUrl: __auth__
+              username: __user__
+              password: __pwd__
+              tenantID: __tenant__
+              regionName: __region__
+            EOF
+            curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.3.3
+            sudo cp /tmp/config.yml /etc/rexray/config.yml
+            sudo service rexray start
+            wc_notify --data-binary '{"status": "SUCCESS", "reason": "Rexray installed"}'
+
+          params:
+            wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
+            __auth__: {get_param: openstack_auth}
+            __user__: {get_param: openstack_user}
+            __pwd__: {get_param: openstack_pwd}
+            __tenant__: {get_param: openstack_tenant}
+            __region__: {get_param: openstack_region}
