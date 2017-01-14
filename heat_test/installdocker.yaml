@@ -10,25 +10,31 @@ parameters:
   flavor:
     type: string
     default: m1.small
+  private-network:
+    type: string
+    default: my-private-network
   openstack_auth:
     type: string
   openstack_user:
     type: string
   openstack_pwd:
     type: string
-  openstack_tenant:
+  openstack_tenantID:
     type: string
   openstack_region:
     type: string
     default: region1
+  timeout:
+    type: number
+    default: 1800
 
 resources:
   wait_condition:
     type: OS::Heat::WaitCondition
     properties:
       handle: {get_resource: wait_handle}
-      # Note, count of 5 vs 6 is due to duplicate signal ID 5 sent below
       count: 3
+      timeout: {get_param: timeout}
 
   wait_handle:
     type: OS::Heat::WaitConditionHandle
@@ -39,6 +45,7 @@ resources:
       image: {get_param: image}
       flavor: {get_param: flavor}
       key_name: {get_param: key_name}
+      networks: [{network: {get_param: private-network}}]
       user_data_format: RAW
       user_data:
         str_replace:
@@ -47,7 +54,7 @@ resources:
             curl -sSL https://get.docker.com/ | sh
             wc_notify --data-binary '{"status": "SUCCESS", "reason": "Docker installed"}'
 
-            cd
+            cd /home/ubuntu
             git clone https://github.com/3l3ktr0/CloudHP.git cloudHP
             cd cloudHP
             sudo docker build ./webserver -t cloudhp_webserver
@@ -71,7 +78,7 @@ resources:
               authUrl: __auth__
               username: __user__
               password: __pwd__
-              tenantID: __tenant__
+              tenantID: __tenantID__
               regionName: __region__
             EOF
             curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.3.3
@@ -84,5 +91,11 @@ resources:
             __auth__: {get_param: openstack_auth}
             __user__: {get_param: openstack_user}
             __pwd__: {get_param: openstack_pwd}
-            __tenant__: {get_param: openstack_tenant}
+            __tenantID__: {get_param: openstack_tenantID}
             __region__: {get_param: openstack_region}
+
+outputs:
+  instance_name:
+    value: {get_attr: [docker-test, name]}
+  instance_ip:
+    value: {get_attr: [docker-test, first_address]}
