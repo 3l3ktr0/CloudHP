@@ -119,7 +119,7 @@ echo "---STEP 5: DONE---"
 #Use docker-machine to create VM instances with Docker
 #Done in parallel if -p given as parameter. Maybe less reliable (e.g apt update error)
 echo "---STEP 6: Creating $NODES instances with Docker---"
-echo "---STEP 6 Estimated duration: 1 minute per instance---"
+echo "---STEP 6 Estimated duration: 2 minutes per instance---"
 swarmkey=swarm-key-$(uuidgen)
 openstack keypair create $swarmkey > $swarmkey.pem
 for ((i=1; i <= $NODES; i++)); do
@@ -135,7 +135,7 @@ for ((i=1; i <= $NODES; i++)); do
     --openstack-net-name="$NETWORK" --openstack-sec-groups="docker-secgroup" \
     --openstack-ssh-user="$SSH_USER" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
     ${nodes[$i]} >/dev/null &
-    sleep 60
+    sleep 30
   else
     docker-machine create -d openstack --openstack-flavor-name="$FLAVOR" \
     --openstack-image-name="$snapshot_name" --openstack-keypair-name="$swarmkey"\
@@ -171,17 +171,40 @@ done
 wait
 echo "---STEP 9: DONE---"
 
+echo "---STEP 10: Installing REX-Ray on the $NODES instances---"
+cat << EOF > /tmp/config.yml
+rexray:
+  storageDrivers:
+    - openstack
+volume:
+  mount:
+    prempt: true
+openstack:
+  authUrl: $OS_AUTH_URL
+  username: $OS_USERNAME
+  password: $OS_PASSWORD
+  tenantID: $OS_TENANT_ID
+  regionName: $OS_REGION_NAME
+EOF
+for ((i=1; i <= $NODES; i++)); do
+  docker-machine ssh ${nodes[$i]} 'curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.3.3'
+  docker-machine scp /tmp/config.yml ${nodes[$i]}:/tmp/config.yml
+  docker-machine ssh ${nodes[$i]} 'sudo cp /tmp/config.yml /etc/rexray/config.yml && sudo service rexray start'
+done
+echo "---STEP 10: DONE---"
+
+
 #Create Swarm networking
-echo "---STEP 10: Creating the Swarm networks---"
+echo "---STEP 11: Creating the Swarm networks---"
 cmd="sudo docker network create -d overlay swarm_services && \
 sudo docker network create -d overlay swarm_db_i && \
 sudo docker network create -d overlay swarm_db_s && \
 sudo docker network create -d overlay swarm_proxy"
 docker-machine ssh ${nodes[1]} "$cmd"
-echo "---STEP 10: DONE---"
+echo "---STEP 11: DONE---"
 
 #And finally, launch the services !
-echo "---STEP 11: Starting services---"
+echo "---STEP 12: Starting services---"
 # cmd="sudo docker service create --name web --network swarm_services,swarm_proxy cloudhp_webserver && \
 # sudo docker service create --name db_i --network swarm_db_i \
 # --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_i,dst=/var/lib/mysql db_i && \
@@ -211,7 +234,7 @@ sudo docker service create --name p --network swarm_services \
 -e OS_PASSWORD=$OS_PASSWORD cloudhp_p && \
 sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
 -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
-sleep 10 && curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
+sleep 10 && curl localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web\&servicePath=/\&port=5000"
 
 #'Workaround' for a Cinder bug which gives a wrong device name (todo)
 #journalctl -u rexray | grep -o -m 1 'open /dev/.*: no such file or directory' | cut -d: -f1 | cut -c6-
@@ -220,12 +243,12 @@ sleep 10 && curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=we
 
 #Execute commands remotely on manager
 docker-machine ssh ${nodes[1]} "$cmd"
-echo "---STEP 11: DONE---"
+echo "---STEP 12: DONE---"
 
-echo "---STEP 12: Allocating and associating floating IP---"
+echo "---STEP 13: Allocating and associating floating IP---"
 pubip=$(openstack floating ip create -f json external-network | jq .floating_ip_address | sed 's/"//g')
 openstack server add floating ip ${nodes[1]} $pubip
-echo "---step 12: DONE---"
+echo "---step 13: DONE---"
 
 echo "---Application deployed succesfully !---"
 echo "---Launch it by going to http://$pubip/index.html?id=<ID> on your browser---"
