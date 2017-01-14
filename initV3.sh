@@ -97,10 +97,10 @@ echo "---STEP 5: Creating Docker snapshot image---"
 #Create instance with Docker and Rex-Ray preinstalled
 stack_name=docker-stack-$(uuidgen)
 heat stack-create $stack_name -f heat_test/installdocker.yaml \
--P "openstack_auth=$OS_AUTH_URL;openstack_user=$OS_USERNAME;openstack_pwd=$OS_PASSWORD;openstack_tenant=$OS_TENANT_ID;openstack_region=$OS_REGION_NAME"
+-P "openstack_auth=$OS_AUTH_URL;openstack_user=$OS_USERNAME;openstack_pwd=$OS_PASSWORD;openstack_tenantID=$OS_TENANT_ID;openstack_region=$OS_REGION_NAME"
 
 #Wait until image creation is complete (poll every minute)
-echo "Waiting for stack creation to complete (estimated duration: 10 to 15 minutes)..."
+echo "Waiting for stack creation to complete (estimated duration: 10 to 20 minutes)..."
 until heat stack-show $stack_name | grep -m 1 status | grep -q "CREATE_COMPLETE"
 do
   sleep 60
@@ -110,9 +110,9 @@ done
 instance_name=$(heat output-show $stack_name instance_name)
 #Snapshot the instance
 snapshot_name=docker-snapshot-$(uuidgen)
-nova stop $instance_name
+#nova stop $instance_name
 nova image-create --poll $instance_name $snapshot_name
-nova delete $instance_name
+#nova delete $instance_name
 heat stack-delete -y $stack_name
 echo "---STEP 5: DONE---"
 
