@@ -146,7 +146,7 @@ if openstack image list | grep -q -m 1 'docker-snapshot'; then
 else
   #Create instance with Docker preinstalled
   stack_name=docker-stack-$(uuidgen)
-  heat stack-create $stack_name -f heat_test/installdocker.yaml
+  heat stack-create $stack_name -f heat_docker/installdocker.yaml
   #Wait until image creation is complete (poll every 30s)
   echo "Waiting for stack creation to complete (estimated duration: 10 to 20 minutes)..."
   until heat stack-show $stack_name 2>/dev/null | grep -m 1 status | grep -q "CREATE_COMPLETE"
