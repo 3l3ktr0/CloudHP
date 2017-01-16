@@ -250,8 +250,17 @@ docker-machine ssh ${nodes[1]} << EOF
 EOF
 echo "---STEP 10: DONE---"
 
+echo "---STEP 11: Building w image...---"
+for ((i = 1; i <= $WORKERS; i++)); do
+  docker-machine ssh ${nodes[$MANAGERS + $i]} << EOF &
+    cd ./cloudHP
+    sudo docker build ./microservices/w -t cloudhp_w
+EOF
+
+done
+echo "---STEP 11: DONE---"
 #And finally, launch the services !
-echo "---STEP 11: Starting services---"
+echo "---STEP 12: Starting services---"
 docker-machine ssh ${nodes[1]} << EOF
   sudo docker service create --name db_i --network swarm_db_i db_i
   sudo docker service create --name db_s --network swarm_db_s --constraint 'node.role == manager' \
@@ -289,14 +298,14 @@ docker-machine ssh ${nodes[1]} << EOF
     sudo cp actual_dir dir_in_cinder
   fi
 EOF
-echo "---STEP 11: DONE---"
+echo "---STEP 12: DONE---"
 
-echo "---STEP 12: Allocating and associating floating IPs to manager nodes---"
+echo "---STEP 13: Allocating and associating floating IPs to manager nodes---"
 for (( i = 1; i <= $MANAGERS; i++ )); do
   pubip=$(openstack floating ip create -f json external-network | jq .floating_ip_address | sed 's/"//g')
   openstack server add floating ip ${nodes[$i]} $pubip
 done
-echo "---step 12: DONE---"
+echo "---step 13: DONE---"
 
 echo "---Application deployed succesfully !---"
 echo "---Launch it by going to http://$pubip/index.html?id=<ID> on your browser---"
