@@ -221,10 +221,12 @@ echo "---STEP 9: Installing REX-Ray on the $NODES instances---"
 cat << EOF > /tmp/config.yml
 rexray:
   storageDrivers:
-    - openstack
-volume:
-  mount:
-    prempt: true
+  - openstack
+  volume:
+    mount:
+      preempt: true
+    unmount:
+      ignoreUsedCount: true
 openstack:
   authUrl: $OS_AUTH_URL
   username: $OS_USERNAME
@@ -235,7 +237,10 @@ EOF
 for ((i=1; i <= $NODES; i++)); do
   docker-machine ssh ${nodes[$i]} 'curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.3.3'
   docker-machine scp /tmp/config.yml ${nodes[$i]}:/tmp/config.yml
-  docker-machine ssh ${nodes[$i]} 'sudo cp /tmp/config.yml /etc/rexray/config.yml && sudo service rexray start'
+  docker-machine ssh ${nodes[$i]} << EOF
+    sudo cp /tmp/config.yml /etc/rexray/config.yml
+    sudo service rexray start
+EOF
 done
 echo "---STEP 9: DONE---"
 
@@ -266,12 +271,12 @@ docker-machine ssh ${nodes[1]} << EOF
   sudo docker service create --name db_i --replicas 2 --network swarm_db_i db_i
   sudo docker service create --name db_s --network swarm_db_s
   --constraint "node.hostname == ${nodes[1]}" \
-  --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s
+  --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb,dst=/var/lib/mysql db_s
   sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i
   sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s
   sudo docker service create --name w --network swarm_services \
   --constraint 'node.role != manager' --replicas $WORKERS cloudhp_w
-  sudo docker service create --name b --network swarm_services \
+  sudo docker service create --name b --network swarm_services, swarm_db_s \
   -e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
   -e OS_PASSWORD=$OS_PASSWORD cloudhp_b
   sudo docker service create --name p --network swarm_services \
