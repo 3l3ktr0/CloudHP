@@ -269,14 +269,14 @@ echo "---STEP 11: DONE---"
 echo "---STEP 12: Starting services---"
 docker-machine ssh ${nodes[1]} << EOF
   sudo docker service create --name db_i --replicas 2 --network swarm_db_i db_i
-  sudo docker service create --name db_s --network swarm_db_s
+  sudo docker service create --name db_s --network swarm_db_s \
   --constraint "node.hostname == ${nodes[1]}" \
   --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb,dst=/var/lib/mysql db_s
   sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i
   sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s
   sudo docker service create --name w --network swarm_services \
   --constraint 'node.role != manager' --replicas $WORKERS cloudhp_w
-  sudo docker service create --name b --network swarm_services, swarm_db_s \
+  sudo docker service create --name b --network swarm_services,swarm_db_s \
   -e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
   -e OS_PASSWORD=$OS_PASSWORD cloudhp_b
   sudo docker service create --name p --network swarm_services \
