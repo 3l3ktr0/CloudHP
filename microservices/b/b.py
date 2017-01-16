@@ -37,6 +37,19 @@ def api_identify(id):
 
             conn = swiftclient.Connection(authurl=auth, user=user, key=pwd, tenant_name=tenantname, auth_version='2')
             conn.put_object('prices', '{}.txt'.format(id), contents=res_w['img'])
+
+            #on insère dans la BD le fait que l'utilisateur a joué
+            conn2 = pymysql.connect(host='db_s', user='root', passwd='root',
+                           db='playstatus', cursorclass=pymysql.cursors.DictCursor)
+            try:
+                with conn2.cursor() as cur:
+                    query = "INSERT INTO customer_status(id_customer, playdate) VALUES (%s, NOW())"
+                    cur.execute(query, (id,))
+
+                conn2.commit()
+            finally:
+                conn2.close()
+
             return jsonify({"message": "Bonsoir"})
         else:
             return jsonify({"message": "W failed"}) #to change ?
