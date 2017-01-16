@@ -51,9 +51,9 @@ def api_identify(id):
             finally:
                 conn2.close()
 
-            return jsonify({"message": "Bonsoir"})
+            return jsonify({"message":"Recharger la page pour afficher votre prix"})
         else:
-            return jsonify({"message": "W failed"}) #to change ?
+            return jsonify({"message":"Erreur dans W : ne peut pas générer de prix"}) #to change ?
     except Exception as e:
         abort(503) #DB unavailable
 
