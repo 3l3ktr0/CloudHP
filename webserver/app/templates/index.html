@@ -35,7 +35,12 @@
         
             {% endif %}
             
-			<input type="submit" value="Play !"/>
+            {% if services.s.playdate is not none %}
+			 <input type="submit" value="Play !"/>
+            {% else %}
+             <p> You have already played the game on {{ services.s.playdate }} ! </p>
+             <input type="submit" value="Play !" disabled>
+            {% endif %}
             
 		</form>
 	</p>
