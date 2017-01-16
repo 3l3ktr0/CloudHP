@@ -1,5 +1,5 @@
 FROM b_p_common
-RUN pip3 install pymysql
+RUN pip3 install pymysql requests
 ADD . /b
 WORKDIR /b
 EXPOSE 5003

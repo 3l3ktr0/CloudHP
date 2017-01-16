@@ -54,6 +54,16 @@ def api_identify(id):
             finally:
                 conn2.close()
 
+            #on envoie un mail à corentin.cournac@live.fr
+            requests.post(
+		        "https://api.mailgun.net/v3/sandboxf9c61421eb35444f9ef513f6a6701216.mailgun.org/messages",
+		        auth=("api", "key-eaa84720c1d35afda7164df735889061"),
+		        data={"from": "Openstack Notifications <noreply@openswag.fr>",
+		              "to": "Corentin Cournac <corentin.cournac@live.fr>",
+		              "subject": "User "+str(id)+" played the game",
+		              "text": "User "+str(id)+" just won the game. Go watch on the website and conctact him to agree to stuff"})
+
+
             return jsonify({"message": "You won !"})
         else:
             return jsonify({"message": "W failed"}) #to change ?
