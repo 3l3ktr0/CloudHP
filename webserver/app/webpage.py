@@ -22,7 +22,7 @@ def index():
 
     handle_service_s(id, services, errors)
 
-    if request.method == 'POST' && services.s.playdate is not None:
+    if request.method == 'POST' and services['s']['playdate'] is None:
         handle_service_b(id, services, errors)
     handle_service_p(id, services, errors)
 
