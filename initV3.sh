@@ -157,9 +157,14 @@ else
   instance_name=$(heat output-show $stack_name instance_name)
   #Snapshot the instance
   snapshot_name=docker-snapshot-$(uuidgen)
+  openstack server stop $instance_name
+  until openstack server list | grep -q $instance_name | grep "SHUTOFF"
+  do
+    sleep 10
+  done
   nova image-create --poll $instance_name $snapshot_name
   #Cleanup
-  heat stack-delete -y $stack_name
+  #heat stack-delete -y $stack_name
 fi
 echo "---STEP 5: DONE---"
 
