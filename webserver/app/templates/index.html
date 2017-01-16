@@ -35,7 +35,7 @@
         
             {% endif %}
             
-            {% if services.s.playdate is not none %}
+            {% if services.s.playdate is none %}
 			 <input type="submit" value="Play !"/>
             {% else %}
              <p> You have already played the game on {{ services.s.playdate }} ! </p>
