@@ -51,7 +51,7 @@ def api_identify(id):
             finally:
                 conn2.close()
 
-            return jsonify({"message":"Recharger la page pour afficher votre prix"})
+            return jsonify({"message":"Vous avez gagné !"})
         else:
             return jsonify({"message":"Erreur dans W : ne peut pas générer de prix"}) #to change ?
     except Exception as e:

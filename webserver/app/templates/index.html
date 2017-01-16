@@ -30,19 +30,25 @@
         <h2>Service Button (B)</h2>
         <p>
 		<form action="" method="POST">
+        {% if errors.b %}
+            <p> Service B not available </p>
+        {% else %}
             {% if  services.b %}
                 <p>{{ services.b.message }}</p>
-        
-            {% endif %}
-            
-            {% if services.s.playdate is none %}
-			 <input type="submit" value="Play !"/>
             {% else %}
-             <p> You have already played the game on {{ services.s.playdate }} ! </p>
-             <input type="submit" value="Play !" disabled>
+                
+                {% if services.s.playdate is none %}
+    			 <input type="submit" value="Play !"/>
+                {% else %}
+                 <p> You have already played the game on {{ services.s.playdate }} ! </p>
+                 <input type="submit" value="Play !" disabled>
+                {% endif %}
+
             {% endif %}
+        {% endif %}
             
 		</form>
+        }
 	</p>
     </div>
 
