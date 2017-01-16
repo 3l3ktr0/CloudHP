@@ -15,7 +15,6 @@ def index():
     errors = {}
     services = {}
 
-    #Service I
     bad_request = handle_service_i(id, services, errors)
     if bad_request:
         return render_template('noidprovided.html')
@@ -25,6 +24,9 @@ def index():
     if request.method == 'POST' and errors.get('s', None) is None and services['s']['playdate'] is None:
         handle_service_b(id, services, errors)
         handle_service_s(id, services, errors)
+    else:
+        check_b_alive(errors)
+
     handle_service_p(id, services, errors)
 
     return render_template('index.html', services=services, errors=errors)
@@ -62,6 +64,14 @@ def handle_service_b(id, services, errors):
         errors['b'] = str(e)
     finally:
         return bad_request_check
+
+def check_b_alive(errors):
+    try:
+        r = requests.get('http://b:5003/')
+        if (r.status_code != 200):
+            errors['b'] = "B not available"
+    except requests.exceptions.RequestException as e:
+        errors['b'] = str(e)
 
 def handle_service_s(id, services, errors):
     try:

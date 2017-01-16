@@ -41,21 +41,20 @@ def api_identify(id):
 
             #on insère dans la BD le fait que l'utilisateur a joué
             conn2 = pymysql.connect(host='db_s', user='root', passwd='root',
-                           db='playstatus', cursorclass=pymysql.cursors.DictCursor)
+                                    db='playstatus', cursorclass=pymysql.cursors.DictCursor)
             try:
                 with conn2.cursor() as cur:
                     query = "INSERT INTO customer_status(id_customer, playdate) VALUES (%s, NOW())"
                     cur.execute(query, (id,))
-
                 conn2.commit()
             finally:
                 conn2.close()
 
-            return jsonify({"message":"Vous avez gagné !"})
+            return jsonify({"message": "Bonsoir"})
         else:
-            return jsonify({"message":"Erreur dans W : ne peut pas générer de prix"}) #to change ?
+            return jsonify({"message": "W failed"}) #to change ?
     except Exception as e:
-        abort(503) #DB unavailable
+        abort(503)
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5003)
