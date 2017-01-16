@@ -158,7 +158,7 @@ else
   #Snapshot the instance
   snapshot_name=docker-snapshot-$(uuidgen)
   openstack server stop $instance_name
-  until openstack server list | grep -q $instance_name | grep "SHUTOFF"
+  until openstack server list | grep $instance_name | grep -q "SHUTOFF"
   do
     sleep 10
   done
@@ -188,14 +188,14 @@ for ((i=1; i <= $NODES; i++)); do
     --openstack-image-name="$snapshot_name" --openstack-keypair-name="$swarmkey"\
     --openstack-net-name="$NETWORK" --openstack-sec-groups="docker-secgroup" \
     --openstack-ssh-user="$SSH_USER" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
-    ${nodes[$i]} >/dev/null &
+    ${nodes[$i]} &
     sleep 10
   else
     docker-machine create -d openstack --openstack-flavor-name="$FLAVOR" \
     --openstack-image-name="$snapshot_name" --openstack-keypair-name="$swarmkey"\
     --openstack-net-name="$NETWORK" --openstack-sec-groups="docker-secgroup" \
     --openstack-ssh-user="$SSH_USER" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
-    ${nodes[$i]} >/dev/null
+    ${nodes[$i]}
   fi
 done
 wait
