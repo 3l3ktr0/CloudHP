@@ -22,8 +22,9 @@ def index():
 
     handle_service_s(id, services, errors)
 
-    if request.method == 'POST' and services['s']['playdate'] is None:
+    if request.method == 'POST' and errors.get('s', None) is None and services['s']['playdate'] is None:
         handle_service_b(id, services, errors)
+        handle_service_s(id, services, errors)
     handle_service_p(id, services, errors)
 
     return render_template('index.html', services=services, errors=errors)
