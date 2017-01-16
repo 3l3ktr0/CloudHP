@@ -9,6 +9,8 @@
             {% else %}
               {% if services.b %}
                 <p>{{ services.b.message }}</p>
+                <p> You have already played the game on {{ services.s.playdate }} ! </p>
+                <input type="submit" value="Play !" disabled>
               {% else %}
                 {% if services.s.playdate is none %}
                   <input type="submit" value="Play !" />

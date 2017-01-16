@@ -54,7 +54,7 @@ def api_identify(id):
             finally:
                 conn2.close()
 
-            return jsonify({"message": "Vous avez gagné !"})
+            return jsonify({"message": "You won !"})
         else:
             return jsonify({"message": "W failed"}) #to change ?
     except Exception as e:
