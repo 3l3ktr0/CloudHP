@@ -24,36 +24,13 @@ for node in $(docker-machine ls -q --filter name=swarm-master-.*)
 do
   docker-machine ssh $node << EOF &
     cd ./cloudHP
-    sudo docker service rm \$(sudo docker service list -q)
-
-    sudo docker service create --name db_i --replicas 2 --network swarm_db_i db_i
-    sudo docker service create --name db_s --network swarm_db_s
-    --constraint "node.hostname == ${nodes[1]}" \
-    --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb,dst=/var/lib/mysql db_s
-    sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i
-    sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s
-    sudo docker service create --name w --network swarm_services \
-    --constraint 'node.role != manager' --replicas $WORKERS cloudhp_w
-    sudo docker service create --name b --network swarm_services, swarm_db_s \
-    -e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
-    -e OS_PASSWORD=$OS_PASSWORD cloudhp_b
-    sudo docker service create --name p --network swarm_services \
-    -e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
-    -e OS_PASSWORD=$OS_PASSWORD cloudhp_p
-
-    sudo docker service create --name swarm-listener --network swarm_proxy \
-    --mount "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock" \
-    -e DF_NOTIF_CREATE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/reconfigure \
-    -e DF_NOTIF_REMOVE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/remove \
-    --constraint 'node.role == manager' vfarcic/docker-flow-swarm-listener
-
-    sudo docker service create --name proxy -p 80:80 --network swarm_proxy \
-    -e MODE=swarm -e LISTENER_ADDRESS=swarm-listener \
-    --replicas $MANAGERS --constraint 'node.role == manager' vfarcic/docker-flow-proxy
-
-    sudo docker service create --name web --mode global --network swarm_services,swarm_proxy \
-    --label com.df.notify=true --label com.df.distribute=true --label com.df.servicePath=/ \
-    --label com.df.port=5000 cloudhp_webserver
+    sudo docker service update --image cloudhp_webserver web
+    sudo docker service update --image cloudhp_i i
+    sudo docker service update --image cloudhp_s s
+    sudo docker service update --image cloudhp_b b
+    sudo docker service update --image cloudhp_p p
+    sudo docker service update --image db_i db_i
+    sudo docker service update --image db_s db_s
 EOF
 done
 wait
