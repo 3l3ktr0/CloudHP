@@ -1,8 +1,38 @@
 #!/bin/bash
-NODES=4
+#Deployment script for the CloudHP Application
+#This script :
+# -installs software required to manage the Swarm nodes (Openstack client and docker-machine)
+# -generates a snapshot with Docker installed and the app images built (build once, run anywhere :) )
+# -makes a Docker Swarm (1.12) cluster based on hosts created with Docker-machine using the snapshot
+#
+#Requirements :
+# -A Bastion VM, accessible from the outside with a floating IP.
+# -An Openstack private network (replace the NETWORK variable below with yours !)
+# -An Ubuntu-based image, tested with 1404, should work with 1604. Replace SSH_USER if necessary.
+# -A V2 OPENRC file. Get yours at "Access and Security -> API Access" on the Openstack dashboard.
+# -Basically, the requirements are the same steps we followed during the 2nd or 3rd lab session
+#  to set up the Bastion VM.
+#
+#Estimated duration : 20 to 30 minutes (75% of the duration is taken up by Docker setup).
+#Depends on the network performance (many things are downloaded from internet)
+#and whether the Parallel mode (-p option) is enabled. It makes docker-machine
+#stuff a bit faster, but behaves strangely (rather rarely though).
+#
+#How to use :
+# -Check that every requirement is met.
+# -SCP the V2 OPENRC file into your Bastion VM.
+# -SSH into Bastion VM.
+# -clone the project : git clone https://github.com/3l3ktr0/CloudHP.git cloudHP
+# -execute the command : cd cloudHP && sudo chmod +x init.sh
+# -execute the command : ./init.sh -f <OPENRC FILE> [-p if you want parallel]
+# -Have a coffee or play video games or browse funny stuff online for 20-30 minutes :)
+
+MANAGERS=1
+WORKERS=3
+
 GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
-##MODIFY THIS TO CONFORM WITH YOUR OPENSTACK INSTALLATION##
+############ MODIFY THIS TO CONFORM WITH YOUR OPENSTACK INSTALLATION #############
 FLAVOR="m1.small"
 NETWORK="my-private-network"
 SSH_USER="ubuntu"
@@ -27,12 +57,22 @@ while [[ "$#" -ne 0 ]]; do
       exit 1
     fi
     ;;
-    "-n" )
+    "-w" )
     if [[ ($2 =~ ^[0-9]+$) && $2 -gt 1 ]]; then
-      NODES=$2
+      WORKERS=$2
       shift
     else
       echo "Argument to -n must be a number !"
+      help
+      exit 1
+    fi
+    ;;
+    "-m" )
+    if [[ ($2 =~ ^[0-9]+$) && $(($2 % 2)) -eq 1 ]]; then
+      MANAGERS=$2
+      shift
+    else
+      echo "Number of managers must be odd !"
       help
       exit 1
     fi
@@ -58,6 +98,8 @@ if [[ -z $SOURCE ]]; then
   exit 1
 fi
 
+NODES=$(($MANAGERS+$WORKERS))
+
 echo "---STEP 1: OpenStack credentials---"
 . "$SOURCE"
 cd "$(dirname "$(realpath "$0")")";
@@ -67,7 +109,9 @@ echo "---STEP 1: DONE---"
 echo "---STEP 2: Installing requirements (python and jq)---"
 sudo apt-get update
 sudo apt-get install -y python3-pip jq
-pip3 install python-openstackclient python-heatclient
+if ! which openstack >/dev/null; then
+  pip3 install python-openstackclient python-heatclient
+fi
 echo "---STEP 2: DONE---"
 
 echo "---STEP 3: Creating Docker security group---"
@@ -87,43 +131,50 @@ echo "---STEP 3: DONE---"
 
 #Install Docker-machine on Bastion VM
 echo "---STEP 4: Installing Docker-machine---"
-curl -L https://github.com/docker/machine/releases/download/v0.9.0-rc2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine \
-&& chmod +x /tmp/docker-machine \
-&& sudo cp /tmp/docker-machine /usr/bin/docker-machine
+if ! which docker-machine >/dev/null; then
+  curl -L https://github.com/docker/machine/releases/download/v0.9.0-rc2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine \
+  && chmod +x /tmp/docker-machine \
+  && sudo cp /tmp/docker-machine /usr/bin/docker-machine
+fi
 echo "---STEP 4: DONE---"
 
 echo "---STEP 5: Creating Docker snapshot image---"
-#Create instance with Docker and Rex-Ray preinstalled
-stack_name=docker-stack-$(uuidgen)
-heat stack-create $stack_name -f heat_test/installdocker.yaml
-
-#Wait until image creation is complete (poll every minute)
-echo "Waiting for stack creation to complete (estimated duration: 10 to 20 minutes)..."
-until heat stack-show $stack_name | grep -m 1 status | grep -q "CREATE_COMPLETE"
-do
-  sleep 60
-done
-
-#Retrieve output values
-instance_name=$(heat output-show $stack_name instance_name)
-#Snapshot the instance
-snapshot_name=docker-snapshot-$(uuidgen)
-#nova stop $instance_name
-nova image-create --poll $instance_name $snapshot_name
-#nova delete $instance_name
-heat stack-delete -y $stack_name
+if openstack image list | grep -q -m 1 'docker-snapshot'; then
+  echo "Docker Snapshot found in image repository ! Using it..."
+  #the command below retrieves the snapshot image name from the image list
+  snapshot_name=$(openstack image list | grep -m 1 'docker-snapshot' | cut -d\| -f3 | tr -d ' ')
+else
+  #Create instance with Docker preinstalled
+  stack_name=docker-stack-$(uuidgen)
+  heat stack-create $stack_name -f heat_test/installdocker.yaml
+  #Wait until image creation is complete (poll every 30s)
+  echo "Waiting for stack creation to complete (estimated duration: 10 to 20 minutes)..."
+  until heat stack-show $stack_name 2>/dev/null | grep -m 1 status | grep -q "CREATE_COMPLETE"
+  do
+    sleep 30
+  done
+  #Retrieve output values
+  instance_name=$(heat output-show $stack_name instance_name)
+  #Snapshot the instance
+  snapshot_name=docker-snapshot-$(uuidgen)
+  nova image-create --poll $instance_name $snapshot_name
+  #Cleanup
+  heat stack-delete -y $stack_name
+fi
 echo "---STEP 5: DONE---"
 
 #Use docker-machine to create VM instances with Docker
 #Done in parallel if -p given as parameter. Maybe less reliable (e.g apt update error)
 echo "---STEP 6: Creating $NODES instances with Docker---"
-echo "---STEP 6 Estimated duration: 2 minutes per instance---"
+echo "---STEP 6 Estimated duration: 2 minutes per instance (faster with -p)---"
 swarmkey=swarm-key-$(uuidgen)
 openstack keypair create $swarmkey > $swarmkey.pem
 for ((i=1; i <= $NODES; i++)); do
   uuids[$i]=$(uuidgen)
   if [[ $i -eq 1 ]]; then
     nodes[$i]=swarm-master-${uuids[$i]}
+  elif [[ $i -le $MANAGERS ]]; then
+    nodes[$i]=swarm-manager-${uuids[$i]}
   else
     nodes[$i]=swarm-worker-${uuids[$i]}
   fi
@@ -133,7 +184,7 @@ for ((i=1; i <= $NODES; i++)); do
     --openstack-net-name="$NETWORK" --openstack-sec-groups="docker-secgroup" \
     --openstack-ssh-user="$SSH_USER" --openstack-private-key-file="./$swarmkey.pem" --openstack-insecure \
     ${nodes[$i]} >/dev/null &
-    sleep 30
+    sleep 10
   else
     docker-machine create -d openstack --openstack-flavor-name="$FLAVOR" \
     --openstack-image-name="$snapshot_name" --openstack-keypair-name="$swarmkey"\
@@ -147,17 +198,22 @@ echo "---STEP 6: DONE---"
 
 #Initialize a Swarm
 echo "---STEP 7: Initializing a Docker Swarm---"
-MANAGER_IP="$(docker-machine ip ${nodes[1]})"
-docker-machine ssh ${nodes[1]} "sudo docker swarm init --advertise-addr $MANAGER_IP"
-#Retrieve swarm token
-TOKEN="$(docker-machine ssh ${nodes[1]} 'sudo docker swarm join-token -q worker')"
+MASTER_IP="$(docker-machine ip ${nodes[1]})"
+docker-machine ssh ${nodes[1]} "sudo docker swarm init --advertise-addr $MASTER_IP"
+#Retrieve swarm tokens
+WORKER_TOKEN="$(docker-machine ssh ${nodes[1]} 'sudo docker swarm join-token -q worker')"
+MANAGER_TOKEN="$(docker-machine ssh ${nodes[1]} 'sudo docker swarm join-token -q manager')"
 echo "---STEP 7: DONE---"
 
-#Add worker nodes to swarm
-echo "---STEP 8: Adding worker instances to Swarm---"
-for ((i=2; i <= $NODES; i++)); do
-  cmd="sudo docker swarm join --token $TOKEN $MANAGER_IP:2377"
+#Add worker and manager nodes to swarm
+echo "---STEP 8: Adding instances to Swarm---"
+for ((i = 2; i <= $MANAGERS; i++)); do
+  cmd="sudo docker swarm join --token $MANAGER_TOKEN $MASTER_IP:2377"
   docker-machine ssh ${nodes[$i]} "$cmd"
+done
+for ((i=1; i <= $WORKERS; i++)); do
+  cmd="sudo docker swarm join --token $WORKER_TOKEN $MASTER_IP:2377"
+  docker-machine ssh ${nodes[$MANAGERS + $i]} "$cmd"
 done
 echo "---STEP 8: DONE---"
 
@@ -186,60 +242,66 @@ echo "---STEP 9: DONE---"
 
 #Create Swarm networking
 echo "---STEP 10: Creating the Swarm networks---"
-cmd="sudo docker network create -d overlay swarm_services && \
-sudo docker network create -d overlay swarm_db_i && \
-sudo docker network create -d overlay swarm_db_s && \
-sudo docker network create -d overlay swarm_proxy"
-docker-machine ssh ${nodes[1]} "$cmd"
+docker-machine ssh ${nodes[1]} << EOF
+  sudo docker network create -d overlay swarm_services
+  sudo docker network create -d overlay swarm_db_i
+  sudo docker network create -d overlay swarm_db_s
+  sudo docker network create -d overlay swarm_proxy
+EOF
 echo "---STEP 10: DONE---"
 
 #And finally, launch the services !
 echo "---STEP 11: Starting services---"
-# cmd="sudo docker service create --name web --network swarm_services,swarm_proxy cloudhp_webserver && \
-# sudo docker service create --name db_i --network swarm_db_i \
-# --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_i,dst=/var/lib/mysql db_i && \
-# sudo docker service create --name db_s --network swarm_db_s \
-# --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s && \
-# sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i && \
-# sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s && \
-# sudo docker service create --name b --network swarm_services cloudhp_b && \
-# sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
-# -e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
-# curl 'localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000'"
+docker-machine ssh ${nodes[1]} << EOF
+  sudo docker service create --name db_i --network swarm_db_i db_i
+  sudo docker service create --name db_s --network swarm_db_s --constraint 'node.role == manager' \
+  --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s
+  sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i
+  sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s
+  sudo docker service create --name w --network swarm_services --mode global cloudhp_w
+  sudo docker service create --name b --network swarm_services \
+  -e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
+  -e OS_PASSWORD=$OS_PASSWORD cloudhp_b
+  sudo docker service create --name p --network swarm_services \
+  -e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
+  -e OS_PASSWORD=$OS_PASSWORD cloudhp_p
 
-# 'workaround' needed to get persistant Cinder storage to work... a better solution would be nice
-# but we don't have much time anymore.
-# We don't really need persistant storage for DB_I... so we don't use it.
-cmd="sudo docker service create --name web --mode global --network swarm_services,swarm_proxy cloudhp_webserver && \
-sudo docker service create --name db_i --network swarm_db_i db_i && \
-sudo docker service create --name db_s --network swarm_db_s --constraint 'node.role == manager' \
---mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s && \
-sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i && \
-sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s && \
-sudo docker service create --name b --network swarm_services \
--e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
--e OS_PASSWORD=$OS_PASSWORD cloudhp_b && \
-sudo docker service create --name p --network swarm_services \
--e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
--e OS_PASSWORD=$OS_PASSWORD cloudhp_p && \
-sudo docker service create --name haproxy -p 80:80 -p 8080:8080 --network swarm_proxy \
--e MODE=swarm --constraint 'node.role == manager' vfarcic/docker-flow-proxy && \
-sleep 20 && curl localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web\&servicePath=/\&port=5000"
+  sudo docker service create --name swarm-listener --network swarm_proxy \
+  --mount "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock" \
+  -e DF_NOTIF_CREATE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/reconfigure \
+  -e DF_NOTIF_REMOVE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/remove \
+  --constraint 'node.role == manager' vfarcic/docker-flow-swarm-listener
 
-#'Workaround' for a Cinder bug which gives a wrong device name (todo)
-#journalctl -u rexray | grep -o -m 1 'open /dev/.*: no such file or directory' | cut -d: -f1 | cut -c6-
-#readlink -f /dev/disk/by-id/*
-#si différent, sudo mv pour le bon
+  sudo docker service create --name proxy -p 80:80 --network swarm_proxy \
+  -e MODE=swarm -e LISTENER_ADDRESS=swarm-listener \
+  --mode global --constraint 'node.role == manager' vfarcic/docker-flow-proxy
 
-#Execute commands remotely on manager
-docker-machine ssh ${nodes[1]} "$cmd"
+  sudo docker service create --name web --mode global --network swarm_services,swarm_proxy \
+  --label com.df.notify=true --label com.df.distribute=true --label com.df.servicePath=/ \
+  --label com.df.port=5000 cloudhp_webserver
+EOF
+
+#'Workaround' for a Cinder bug which gives a wrong device name
+docker-machine ssh ${nodes[1]} << EOF
+  dir_in_cinder=\$(journalctl -u rexray|grep -o -m 1 'open /dev/.*: no such file or directory'|cut -d: -f1|cut -c6-)
+  actual_dir=\$(readlink -f /dev/disk/by-id/*)
+  if [[ "\$dir_in_cinder" != "\$actual_dir" ]]; then
+    sudo cp actual_dir dir_in_cinder
+  fi
+EOF
 echo "---STEP 11: DONE---"
 
-echo "---STEP 12: Allocating and associating floating IP---"
-pubip=$(openstack floating ip create -f json external-network | jq .floating_ip_address | sed 's/"//g')
-openstack server add floating ip ${nodes[1]} $pubip
+echo "---STEP 12: Allocating and associating floating IPs to manager nodes---"
+for (( i = 1; i <= $MANAGERS; i++ )); do
+  pubip=$(openstack floating ip create -f json external-network | jq .floating_ip_address | sed 's/"//g')
+  openstack server add floating ip ${nodes[$i]} $pubip
+done
 echo "---step 12: DONE---"
 
 echo "---Application deployed succesfully !---"
 echo "---Launch it by going to http://$pubip/index.html?id=<ID> on your browser---"
 echo "---Consider waiting 2-3 minutes to let DBs init processes finish---"
+# echo "If, for some reason, the last curl command failed. Try this :"
+# echo "-> docker-machine ssh ${nodes[1]}"
+# echo "Then, on this SSH session :"
+# echo "-> curl localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000&distribute=true"

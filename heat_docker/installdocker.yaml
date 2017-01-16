@@ -54,6 +54,7 @@ resources:
             sudo docker build ./microservices/b -t cloudhp_b &
             sudo docker build ./microservices/p -t cloudhp_p &
             sudo docker build ./microservices/s -t cloudhp_s &
+            sudo docker build ./microservices/w -t cloudhp_w &
             wait
             wc_notify --data-binary '{"status": "SUCCESS", "reason": "Docker images built"}'
 
