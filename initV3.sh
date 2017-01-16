@@ -146,7 +146,7 @@ if openstack image list | grep -q -m 1 'docker-snapshot'; then
 else
   #Create instance with Docker preinstalled
   stack_name=docker-stack-$(uuidgen)
-  heat stack-create $stack_name -f heat_test/installdocker.yaml
+  heat stack-create $stack_name -f heat_docker/installdocker.yaml
   #Wait until image creation is complete (poll every 30s)
   echo "Waiting for stack creation to complete (estimated duration: 10 to 20 minutes)..."
   until heat stack-show $stack_name 2>/dev/null | grep -m 1 status | grep -q "CREATE_COMPLETE"
@@ -250,15 +250,27 @@ docker-machine ssh ${nodes[1]} << EOF
 EOF
 echo "---STEP 10: DONE---"
 
+echo "---STEP 11: Building w image...---"
+for ((i = 1; i <= $WORKERS; i++)); do
+  docker-machine ssh ${nodes[$MANAGERS + $i]} << EOF &
+    cd ./cloudHP
+    sudo docker build ./microservices/w -t cloudhp_w
+EOF
+done
+wait
+
+echo "---STEP 11: DONE---"
 #And finally, launch the services !
-echo "---STEP 11: Starting services---"
+echo "---STEP 12: Starting services---"
 docker-machine ssh ${nodes[1]} << EOF
-  sudo docker service create --name db_i --network swarm_db_i db_i
-  sudo docker service create --name db_s --network swarm_db_s --constraint 'node.role == manager' \
+  sudo docker service create --name db_i --replicas 2 --network swarm_db_i db_i
+  sudo docker service create --name db_s --network swarm_db_s
+  --constraint "node.hostname == ${nodes[1]}" \
   --mount type=volume,volume-driver=rexray,volume-opt=size=1,src=mysqldb_s,dst=/var/lib/mysql db_s
   sudo docker service create --name i --network swarm_services,swarm_db_i cloudhp_i
   sudo docker service create --name s --network swarm_services,swarm_db_s cloudhp_s
-  sudo docker service create --name w --network swarm_services --mode global cloudhp_w
+  sudo docker service create --name w --network swarm_services \
+  --constraint 'node.role != manager' --replicas $WORKERS cloudhp_w
   sudo docker service create --name b --network swarm_services \
   -e OS_AUTH_URL=$OS_AUTH_URL -e OS_USERNAME=$OS_USERNAME -e OS_TENANT_NAME=$OS_TENANT_NAME \
   -e OS_PASSWORD=$OS_PASSWORD cloudhp_b
@@ -274,7 +286,7 @@ docker-machine ssh ${nodes[1]} << EOF
 
   sudo docker service create --name proxy -p 80:80 --network swarm_proxy \
   -e MODE=swarm -e LISTENER_ADDRESS=swarm-listener \
-  --mode global --constraint 'node.role == manager' vfarcic/docker-flow-proxy
+  --replicas $MANAGERS --constraint 'node.role == manager' vfarcic/docker-flow-proxy
 
   sudo docker service create --name web --mode global --network swarm_services,swarm_proxy \
   --label com.df.notify=true --label com.df.distribute=true --label com.df.servicePath=/ \
@@ -289,19 +301,15 @@ docker-machine ssh ${nodes[1]} << EOF
     sudo cp actual_dir dir_in_cinder
   fi
 EOF
-echo "---STEP 11: DONE---"
+echo "---STEP 12: DONE---"
 
-echo "---STEP 12: Allocating and associating floating IPs to manager nodes---"
+echo "---STEP 13: Allocating and associating floating IPs to manager nodes---"
 for (( i = 1; i <= $MANAGERS; i++ )); do
   pubip=$(openstack floating ip create -f json external-network | jq .floating_ip_address | sed 's/"//g')
   openstack server add floating ip ${nodes[$i]} $pubip
 done
-echo "---step 12: DONE---"
+echo "---step 13: DONE---"
 
 echo "---Application deployed succesfully !---"
 echo "---Launch it by going to http://$pubip/index.html?id=<ID> on your browser---"
-echo "---Consider waiting 2-3 minutes to let DBs init processes finish---"
-# echo "If, for some reason, the last curl command failed. Try this :"
-# echo "-> docker-machine ssh ${nodes[1]}"
-# echo "Then, on this SSH session :"
-# echo "-> curl localhost:8080/v1/docker-flow-proxy/reconfigure?serviceName=web&servicePath=/&port=5000&distribute=true"
+echo "---Consider waiting 2 to 5 minutes to let DBs init processes finish---"
