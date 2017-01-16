@@ -1,0 +1,23 @@
+<div class='box'>
+    <h2>Service Button (B)</h2>
+    <p>
+        <form action="" method="POST">
+            {% if errors.b %}
+              <p> Service B not available </p>
+            {% elif errors.s %}
+              <p>Service B not available because there is a problem with S !</p>
+            {% else %}
+              {% if services.b %}
+                <p>{{ services.b.message }}</p>
+              {% else %}
+                {% if services.s.playdate is none %}
+                  <input type="submit" value="Play !" />
+                {% else %}
+                  <p> You have already played the game on {{ services.s.playdate }} ! </p>
+                  <input type="submit" value="Play !" disabled>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+        </form>
+    </p>
+</div>
