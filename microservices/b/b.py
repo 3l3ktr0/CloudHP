@@ -10,6 +10,7 @@ from flask import abort
 import logging
 import requests
 import swiftclient
+import pymysql
 import os
 
 app = Flask(__name__)
