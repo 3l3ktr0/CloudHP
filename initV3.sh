@@ -164,7 +164,8 @@ else
   done
   nova image-create --poll $instance_name $snapshot_name
   #Cleanup
-  #heat stack-delete -y $stack_name
+  sleep 10
+  heat stack-delete -y $stack_name
 fi
 echo "---STEP 5: DONE---"
 
@@ -260,14 +261,14 @@ docker-machine ssh ${nodes[1]} << EOF
 EOF
 echo "---STEP 10: DONE---"
 
-echo "---STEP 11: Building w image...---"
-for ((i = 1; i <= $WORKERS; i++)); do
-  docker-machine ssh ${nodes[$MANAGERS + $i]} << EOF &
-    cd ./cloudHP
-    sudo docker build ./microservices/w -t cloudhp_w
-EOF
-done
-wait
+# echo "---STEP 11: Building w image...---"
+# for ((i = 1; i <= $WORKERS; i++)); do
+#   docker-machine ssh ${nodes[$MANAGERS + $i]} << EOF &
+#     cd ./cloudHP
+#     sudo docker build ./microservices/w -t cloudhp_w
+# EOF
+# done
+# wait
 
 echo "---STEP 11: DONE---"
 #And finally, launch the services !
