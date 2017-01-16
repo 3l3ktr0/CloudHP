@@ -16,6 +16,10 @@ import os
 app = Flask(__name__)
 app.debug = True
 
+@app.route("/")
+def api_check_alive():
+    return jsonify({'b':'alive'})
+
 @app.route("/<id>")
 def api_identify(id):
     logging.warning("*** Starting b ****")
