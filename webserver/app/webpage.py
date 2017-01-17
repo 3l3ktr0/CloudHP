@@ -35,7 +35,7 @@ def index():
 def handle_service_i(id, services, errors):
     bad_request_check = False
     try:
-        r = requests.get('http://i:5001/{}'.format(id))
+        r = requests.get('http://i/{}'.format(id))
         #check if id is out of range, if so, status_code is 400
         if (r.status_code == 400):
             bad_request_check = True
@@ -51,7 +51,7 @@ def handle_service_i(id, services, errors):
 def handle_service_b(id, services, errors):
     bad_request_check = False
     try:
-        r = requests.get('http://b:5003/{}'.format(id))
+        r = requests.get('http://b/{}'.format(id))
         logging.warning("Reçu de b %s", r)
         #check if id is out of range, if so, status_code is 400
         if (r.status_code == 400):
@@ -67,7 +67,7 @@ def handle_service_b(id, services, errors):
 
 def check_b_alive(errors):
     try:
-        r = requests.get('http://b:5003/')
+        r = requests.get('http://b/')
         if (r.status_code != 200):
             errors['b'] = "B not available"
     except requests.exceptions.RequestException as e:
@@ -75,7 +75,7 @@ def check_b_alive(errors):
 
 def handle_service_s(id, services, errors):
     try:
-        r = requests.get('http://s:5002/{}'.format(id))
+        r = requests.get('http://s/{}'.format(id))
         if (r.status_code == 200):
             services['s'] = r.json()
         else:
@@ -86,7 +86,7 @@ def handle_service_s(id, services, errors):
 def handle_service_p(id, services, errors):
     bad_request_check = False
     try:
-        r = requests.get('http://p:5004/{}'.format(id))
+        r = requests.get('http://p/{}'.format(id))
         logging.warning("Reçu de p %s", r)
         #check if id is out of range, if so, status_code is 400
         if (r.status_code == 400):
@@ -101,4 +101,4 @@ def handle_service_p(id, services, errors):
         return bad_request_check
 
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=5000)
+        app.run()

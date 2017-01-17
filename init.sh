@@ -142,7 +142,7 @@ fi
 echo "---STEP 4: DONE---"
 
 echo "---STEP 5: Creating Docker snapshot image---"
-if openstack image list | grep -q -m 1 'docker-snapshot'; then
+if openstack image list | grep -q -m 1 'docker-snapshotTEST'; then
   echo "Docker Snapshot found in image repository ! Using it..."
   #the command below retrieves the snapshot image name from the image list
   snapshot_name=$(openstack image list | grep -m 1 'docker-snapshot' | cut -d\| -f3 | tr -d ' ')
@@ -304,7 +304,7 @@ docker-machine ssh ${nodes[1]} << EOF
 
   sudo docker service create --name web --mode global --network swarm_services,swarm_proxy \
   --label com.df.notify=true --label com.df.distribute=true --label com.df.servicePath=/ \
-  --label com.df.port=5000 cloudhp_webserver
+  --label com.df.port=80 cloudhp_webserver
 EOF
 
 #'Workaround' for a Cinder bug which gives a wrong device name

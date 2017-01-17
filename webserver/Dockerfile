@@ -1,6 +1,5 @@
-FROM python:3.4-alpine
-ADD . /web
-WORKDIR /web
-RUN pip install flask requests
-EXPOSE 5000
-CMD ["python", "app/webpage.py"]
+FROM tiangolo/uwsgi-nginx-flask:flask-python3.5
+RUN pip install requests
+COPY ./app /app
+COPY ./nginx.conf /etc/nginx/conf.d
+WORKDIR /app

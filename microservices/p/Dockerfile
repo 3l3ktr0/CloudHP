@@ -1,5 +1,4 @@
-FROM b_p_common
-ADD . /p
-WORKDIR /p
-EXPOSE 5004
-CMD ["python", "p.py"]
+FROM tiangolo/uwsgi-nginx-flask:flask-python3.5
+RUN pip3 install requests python-swiftclient python-keystoneclient
+ADD . /app
+WORKDIR /app

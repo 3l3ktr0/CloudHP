@@ -1,6 +1,5 @@
-FROM b_p_common
+FROM tiangolo/uwsgi-nginx-flask:flask-python3.5
+RUN pip3 install requests python-swiftclient python-keystoneclient
 RUN pip3 install pymysql
-ADD . /b
-WORKDIR /b
-EXPOSE 5003
-CMD ["python", "b.py"]
+ADD . /app
+WORKDIR /app

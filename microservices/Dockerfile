@@ -1,4 +1,3 @@
 #Basic image used by both B and P (install dependencies)
-FROM python:3.4-alpine
-RUN apk add --update g++ linux-headers
-RUN pip3 install flask requests python-swiftclient python-keystoneclient
+FROM tiangolo/uwsgi-nginx-flask:flask-python3.5
+RUN pip3 install requests python-swiftclient python-keystoneclient

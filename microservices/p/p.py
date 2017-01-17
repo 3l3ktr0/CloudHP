@@ -34,4 +34,4 @@ def api_return_picture(id):
         abort(503) #DB unavailable
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5004)
+    app.run()
