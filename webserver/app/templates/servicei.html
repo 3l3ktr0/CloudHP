@@ -1,28 +1,32 @@
 <!-- Service I -->
-<div class='box'>
-    <h2>Service Identification (I)</h2>
-    {% if errors.i %}
-      <p>Service I not currently available.</p>
-      <p>Exception caught :</p>
-      <p>{{ errors.i }}</p>
-    {% else %}
-      <table>
-          <tr>
-              <td>Id</td>
-              <td>{{ services.i.id_customer }}</td>
-          </tr>
-          <tr>
-              <td>First name</td>
-              <td>{{ services.i.firstname }}</td>
-          </tr>
-          <tr>
-              <td>Last name</td>
-              <td>{{ services.i.lastname }}</td>
-          </tr>
-          <tr>
-              <td>Email</td>
-              <td>{{ services.i.email }}</td>
-          </tr>
-      </table>
-    {% endif %}
+<div class="col-xs-12">
+    <div class="well">
+        <h2>Service Identification (I)</h2>
+        {% if errors.i %}
+          <div class="alert alert-danger" role="alert">
+            <p>Service I not currently available.</p>
+            <p>Exception caught :</p>
+            <p><samp>{{ errors.i }}</samp></p>
+          </div>
+        {% else %}
+          <table class="table table-bordered">
+              <tr>
+                  <td>Id</td>
+                  <td>{{ services.i.id_customer }}</td>
+              </tr>
+              <tr>
+                  <td>First name</td>
+                  <td>{{ services.i.firstname }}</td>
+              </tr>
+              <tr>
+                  <td>Last name</td>
+                  <td>{{ services.i.lastname }}</td>
+              </tr>
+              <tr>
+                  <td>Email</td>
+                  <td>{{ services.i.email }}</td>
+              </tr>
+          </table>
+        {% endif %}
+    </div>
 </div>
