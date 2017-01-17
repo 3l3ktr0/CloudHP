@@ -1,4 +1,3 @@
-FROM tiangolo/uwsgi-nginx-flask:flask-python3.5
-RUN pip3 install requests python-swiftclient python-keystoneclient
+FROM b_p_common
 ADD . /app
 WORKDIR /app
