@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-"""Service P play button service"""
+"""Service P returns the BASE64 image stored in Swift"""
 
 from flask import Flask
 from flask import jsonify
@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.debug = True
 
 @app.route("/<id>")
-def api_identify(id):
+def api_return_picture(id):
     logging.warning("*** Starting p ****")
     try:
         auth=os.environ['OS_AUTH_URL']

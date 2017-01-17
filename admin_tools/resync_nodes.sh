@@ -24,13 +24,13 @@ for node in $(docker-machine ls -q --filter name=swarm-master-.*)
 do
   docker-machine ssh $node << EOF &
     cd ./cloudHP
-    sudo docker service update --image cloudhp_webserver web
-    sudo docker service update --image cloudhp_i i
-    sudo docker service update --image cloudhp_s s
-    sudo docker service update --image cloudhp_b b
-    sudo docker service update --image cloudhp_p p
-    sudo docker service update --image db_i db_i
-    sudo docker service update --image db_s db_s
+    sudo docker service update --image cloudhp_webserver:latest web
+    sudo docker service update --image cloudhp_i:latest i
+    sudo docker service update --image cloudhp_s:latest s
+    sudo docker service update --image cloudhp_b:latest b
+    sudo docker service update --image cloudhp_p:latest p
+    sudo docker service update --image db_i:latest db_i
+    sudo docker service update --image db_s:latest db_s
 EOF
 done
 wait

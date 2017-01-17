@@ -4,9 +4,16 @@
 
 <img src="cloudhp_archi.png">
 
-##Architecture prévue
+##Requirements :
+-A Bastion VM, accessible from the outside with a floating IP.
 
-<img src="cloudhp_archi_v2.png">
+-An Openstack private network (replace the NETWORK variable below with yours !)
+
+-An Ubuntu-based image, tested with 1404, should work with 1604. Replace SSH_USER if necessary.
+
+-A V2 OPENRC file. Get yours at "Access and Security -> API Access" on the Openstack dashboard.
+
+-Basically, the requirements are the same steps we followed during the 2nd or 3rd lab session to set up the Bastion VM.
 
 ##How to deploy
 
