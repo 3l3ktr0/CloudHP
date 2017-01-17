@@ -142,7 +142,7 @@ fi
 echo "---STEP 4: DONE---"
 
 echo "---STEP 5: Creating Docker snapshot image---"
-if openstack image list | grep -q -m 1 'docker-snapshotTEST'; then
+if openstack image list | grep -q -m 1 'docker-snapshot'; then
   echo "Docker Snapshot found in image repository ! Using it..."
   #the command below retrieves the snapshot image name from the image list
   snapshot_name=$(openstack image list | grep -m 1 'docker-snapshot' | cut -d\| -f3 | tr -d ' ')

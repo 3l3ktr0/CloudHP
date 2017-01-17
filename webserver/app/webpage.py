@@ -6,6 +6,10 @@ import logging
 
 app = Flask(__name__)
 
+@app.route('/')
+def home_page():
+    return render_template('noidprovided.html')
+
 @app.route('/index.html', methods=['GET','POST'])
 def index():
     id = request.args.get('id', default=None, type=int)

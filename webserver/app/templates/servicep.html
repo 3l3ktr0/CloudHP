@@ -3,11 +3,11 @@
       <h2>Service Status (P)</h2>
       {% if errors.p %}
         <div class="alert alert-danger" role="alert">
-            <p>Service P not currently available.</p>
-            <p>Exception caught :</p>
-            <p><samp>{{ errors.p }}</samp></p>
+            <p>Service P not available.</p>
+            <!-- <p>Exception caught :</p>
+            <p><samp>{{ errors.p }}</samp></p> -->
         </div>
-       
+
       {% elif services.p.imgB64 is not none %}
         <img src="{{ services.p.imgB64 }}"/>
       {% else %}

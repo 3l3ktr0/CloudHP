@@ -46,7 +46,6 @@ resources:
             cd /home/ubuntu
             git clone https://github.com/3l3ktr0/CloudHP.git cloudHP
             cd cloudHP
-            git checkout nginx
             sudo docker build ./webserver -t cloudhp_webserver
             sudo docker build ./microservices -t b_p_common
             sudo docker build ./db_i -t db_i

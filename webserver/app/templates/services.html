@@ -3,12 +3,12 @@
       <h2>Service Status (S)</h2>
       {% if errors.s %}
         <div class="alert alert-danger" role="alert">
-            <p>Service S not currently available.</p>
-            <p>Exception caught :</p>
-            <p><samp>{{ errors.s }}</samp></p>
+            <p>Service S not available.</p>
+            <!-- <p>Exception caught :</p>
+            <p><samp>{{ errors.s }}</samp></p> -->
         </div>
 
-        
+
       {% elif services.s.playdate is not none %}
         <p>You already played the game on : {{ services.s.playdate }}</p>
       {% else %}
