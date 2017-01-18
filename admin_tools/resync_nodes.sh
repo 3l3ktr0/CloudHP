@@ -14,9 +14,6 @@ do
     sudo docker build ./microservices/b -t cloudhp_b
     sudo docker build ./microservices/p -t cloudhp_p
     sudo docker build ./microservices/s -t cloudhp_s
-    #perform some cleanup
-    sudo docker rm -v \$(sudo docker ps -a -q -f status=exited)
-    sudo docker rmi \$(sudo docker images -f "dangling=true" -q)
 EOF
 done
 wait
@@ -26,14 +23,23 @@ for node in $(docker-machine ls -q --filter name=swarm-master-.*)
 do
   docker-machine ssh $node << EOF &
     cd ./cloudHP
-    sudo docker service update --image cloudhp_webserver:latest web
-    sudo docker service update --image cloudhp_i:latest i
-    sudo docker service update --image cloudhp_s:latest s
-    sudo docker service update --image cloudhp_b:latest b
-    sudo docker service update --image cloudhp_p:latest p
-    sudo docker service update --image db_i:latest db_i
-    sudo docker service update --image db_s:latest db_s
+    sudo docker service update --image cloudhp_webserver web
+    sudo docker service update --image cloudhp_i i
+    sudo docker service update --image cloudhp_s s
+    sudo docker service update --image cloudhp_b b
+    sudo docker service update --image cloudhp_p p
+    sudo docker service update --image db_i db_i
+    sudo docker service update --image db_s db_s
 EOF
 done
 wait
 echo "Services updated."
+
+for node in $(docker-machine ls -q --filter state=Running)
+do
+  #perform some cleanup
+  docker-machine ssh $node << EOF >/dev/null &
+    sudo docker rm -v \$(sudo docker ps -a -q -f status=exited)
+    sudo docker rmi \$(sudo docker images -f "dangling=true" -q)
+EOF
+done
