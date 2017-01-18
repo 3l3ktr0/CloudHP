@@ -33,8 +33,9 @@ WORKERS=3
 GIT_CLONE="git clone https://github.com/3l3ktr0/CloudHP.git cloudHP"
 
 ############ MODIFY THIS TO CONFORM WITH YOUR OPENSTACK INSTALLATION #############
-FLAVOR="m1.small"
-NETWORK="my-private-network"
+FLAVOR="m1.small" #the flavor of the created images, should be m1.small or higher
+NETWORK="my-private-network" #MODIFY THIS. Make sure your network has a unique name in Openstack.
+IMAGE="ubuntu1404" #Change this ONLY if the ubuntu image has another name. Image MUST be ubuntu-based.
 SSH_USER="ubuntu"
 
 help() {
@@ -149,7 +150,8 @@ if openstack image list | grep -q -m 1 'docker-snapshot'; then
 else
   #Create instance with Docker preinstalled
   stack_name=docker-stack-$(uuidgen)
-  heat stack-create $stack_name -f heat_docker/installdocker.yaml
+  heat stack-create $stack_name -f heat_docker/installdocker.yaml \
+  -P "image=$IMAGE;flavor=$FLAVOR;private-network=$NETWORK"
   #Wait until image creation is complete (poll every 30s)
   echo "Waiting for stack creation to complete (estimated duration: 10 to 20 minutes)..."
   until heat stack-show $stack_name 2>/dev/null | grep -m 1 status | grep -q "CREATE_COMPLETE"

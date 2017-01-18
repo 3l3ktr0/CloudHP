@@ -1,9 +1,6 @@
 heat_template_version: 2013-05-23
 
 parameters:
-  key_name:
-    type: string
-    default: TP_Cloud_maxime
   image:
     type: string
     default: ubuntu1404
@@ -33,7 +30,6 @@ resources:
     properties:
       image: {get_param: image}
       flavor: {get_param: flavor}
-      key_name: {get_param: key_name}
       networks: [{network: {get_param: private-network}}]
       user_data_format: RAW
       user_data:
