@@ -32,7 +32,6 @@ def api_play_b(id):
             bad_request_check = True
         elif (r.status_code == 200):
             res_w = r.json()
-            logging.warning(res_w)
 
             # Enregistrement de l'image dans SWIFT
             auth=os.environ['OS_AUTH_URL']
