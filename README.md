@@ -21,7 +21,7 @@
 ### What the init.sh script does (minus the details), in three lines ###
 * **Step 1** : it generates a snapshot of an instance with Docker and every Docker image needed by the application.
 * **Step 2** : using Docker-Machine, more instances are created from this snapshot.
-* **Step 3** : the first instance to be created initiate a Swarm, and the others join it. The services are then launched.
+* **Step 3** : the first instance to be created initiates a Swarm, and the others join it. The services are then launched.
 
 
 ##Requirements :
