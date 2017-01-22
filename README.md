@@ -4,6 +4,8 @@
 
 <img src="cloudhp_archi.png">
 
+(Please note that the location of the container services is not accurate but only to give an idea of how it looks like. There are more of them and Docker Swarm distributes them fairly between the nodes. Also, there may be more than one manager : on Helion, there are 3 managers and 3 workers).
+
 ### Tools and Softwares used
 **Application deployment :**
 * **Docker** : each service and the web server are in their own container. Docker allowed us to develop the application easily, without having to worry about the details of its future deployment.
