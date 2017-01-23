@@ -1,5 +1,7 @@
 # CloudHP
+Groupe 3
 
+Corentin Cournac - Maxime Dadoua - Mathieu Dauré - Pierre Présent - Guillaume Thiollière
 ##Architecture
 
 <img src="cloudhp_archi.png">
